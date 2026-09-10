@@ -38,4 +38,14 @@
     <PackageReference Include="System.IO.Ports" Version="9.0.0" />
   </ItemGroup>
 
+  <!-- Garantir que as DLLs de dependências sejam copiadas para a pasta de output -->
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Runtime.TieredCompilation" Value="true" />
+  </ItemGroup>
+
+  <!-- Alterar o tipo de build para WinExe de forma explícita -->
+  <PropertyGroup>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
 </Project>
