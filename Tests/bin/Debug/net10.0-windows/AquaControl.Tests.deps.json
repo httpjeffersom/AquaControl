@@ -663,7 +663,8 @@
       "Aqua Control/1.0.0": {
         "dependencies": {
           "LibreHardwareMonitorLib": "0.9.4",
-          "System.IO.Ports": "9.0.0"
+          "System.IO.Ports": "9.0.0",
+          "System.Management": "9.0.0"
         },
         "runtime": {
           "Aqua Control.dll": {

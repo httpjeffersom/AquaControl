@@ -10,7 +10,6 @@ namespace WatercoolerTemp.ViewModels;
 public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 {
     private const int IntervalMs = 1000;
-    private const string PortName = "COM3";
     private const int ReconnectIntervalMs = 5000;
     private const int HighTemperatureThreshold = 90;
     private const int AlertResetThreshold = 80;
@@ -135,8 +134,9 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
         try
         {
+            string portName = Aqua240XPortDiscovery.FindPort();
             var reader = new CpuTemperatureReader();
-            var client = new Aqua240XSerialClient(PortName, 9600);
+            var client = new Aqua240XSerialClient(portName, 9600);
             service = new WatercoolerMonitorService(reader, client, TimeSpan.FromMilliseconds(IntervalMs));
             service.TemperatureRead += OnTemperatureRead;
             service.TemperatureSent += OnTemperatureSent;
@@ -148,7 +148,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
             StartMonitoring();
             Message = "MONITORAMENTO ATIVO";
             ResetStatistics();
-            AppLogger.Info($"Conectado em {PortName}.");
+            AppLogger.Info($"Conectado em {portName}.");
         }
         catch (Exception exception)
         {
@@ -156,8 +156,8 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
             service = null;
             Status = "DESCONECTADO";
             IsConnected = false;
-            Message = $"AGUARDANDO {PortName}";
-            AppLogger.Error($"Falha ao conectar em {PortName}", exception);
+            Message = "AGUARDANDO WATERCOOLER";
+            AppLogger.Error("Falha ao localizar ou conectar ao watercooler", exception);
         }
     }
 

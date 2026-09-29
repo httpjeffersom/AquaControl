@@ -1720,7 +1720,8 @@
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
           "LibreHardwareMonitorLib": "0.9.4",
-          "System.IO.Ports": "9.0.0"
+          "System.IO.Ports": "9.0.0",
+          "System.Management": "9.0.0"
         },
         "compile": {
           "bin/placeholder/Aqua Control.dll": {}

@@ -1,4 +1,4 @@
-# Aqua Control — Display do watercooler Pichau Aqua 
+# Aqua Control — Display do watercooler Pichau Aqua
 
 Projeto para controlar o display do **Pichau Aqua X** e enviar a temperatura da CPU diretamente para o visor do watercooler.
 
@@ -20,14 +20,14 @@ A comunicação foi analisada através de capturas USB realizadas com:
 
 ## Identificação do dispositivo
 
-| Informação      | Valor            |
-| --------------- | ---------------- |
-| Dispositivo     | Pichau Aqua 240X |
-| Controlador     | WCH CH340        |
-| VID             | `0x1A86`         |
-| PID             | `0x484A`         |
-| Interface       | Serial virtual   |
-| Porta utilizada | `COM3`           |
+| Informação   | Valor                                  |
+| ------------ | -------------------------------------- |
+| Dispositivo  | Pichau Aqua 240X                       |
+| Controlador  | WCH CH340                              |
+| VID          | `0x1A86`                               |
+| PID          | `0x484A`                               |
+| Interface    | Serial virtual                         |
+| Porta serial | Detectada automaticamente pelo VID/PID |
 
 ---
 
@@ -109,8 +109,7 @@ Os bytes finais `30 1D`, por exemplo, podem representar algum mecanismo de verif
 
 ## Comunicação
 
-Atualmente o projeto utiliza a porta serial virtual:
-COM3
+O aplicativo localiza a porta serial do controlador CH340 automaticamente pelo VID/PID `0x1A86:0x484A`. A letra COM pode variar entre computadores e conexões USB; não é necessário configurar `COM3` manualmente.
 
 O software oficial do watercooler deve estar **fechado** durante os testes, pois ele utiliza a mesma porta e pode impedir o acesso ao dispositivo.
 
@@ -125,8 +124,6 @@ app.manifest
 
 O protocolo foi descoberto através da comparação de diferentes pacotes enviados pelo software oficial
 
-
-
 ## Status do projeto
 
 ### Confirmado
@@ -134,22 +131,17 @@ O protocolo foi descoberto através da comparação de diferentes pacotes enviad
 - [x] Identificação do controlador USB
 - [x] VID/PID
 - [x] Comunicação através de porta serial virtual
-- [x] Identificação da `COM3`
+- [x] Detecção automática da porta serial pelo VID/PID
 - [x] Captura dos pacotes USB
 - [x] Identificação do payload
 - [x] Identificação do byte da temperatura
 - [x] Envio da temperatura para o display
 
-
 ---
 
-
-
-Ao iniciar, a aplicação tenta conectar automaticamente à porta fixa `COM3` e tenta reconectar a cada 5 segundos quando o dispositivo não está disponível.
+Ao iniciar, a aplicação tenta localizar o controlador CH340 e conectar à porta serial correspondente. Se o dispositivo não estiver disponível, tenta novamente a cada 5 segundos.
 
 O botão de conexão permite iniciar ou interromper o monitoramento. A interface também exibe as temperaturas mínima, média e máxima.
-
-
 
 Quando a temperatura da CPU atinge `90 °C`, o Windows exibe uma notificação de temperatura alta. O alerta não se repete enquanto a temperatura permanecer acima desse limite e é liberado novamente quando ela cai para `80 °C` ou menos.
 
@@ -172,4 +164,3 @@ Atualmente, o protocolo foi confirmado utilizando um Pichau Aqua 240X.
 A compatibilidade com outros modelos da linha Aqua, como Aqua 120X e Aqua 360X, ainda não foi confirmada
 
 [Ícone utilizado — Flaticon](https://www.flaticon.com/free-icon/sea_8312504)
-

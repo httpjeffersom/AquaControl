@@ -36,6 +36,7 @@
 
     <!-- Porta serial (equivalente ao pyserial) -->
     <PackageReference Include="System.IO.Ports" Version="9.0.0" />
+    <PackageReference Include="System.Management" Version="9.0.0" />
   </ItemGroup>
 
   <!-- Garantir que as DLLs de dependências sejam copiadas para a pasta de output -->

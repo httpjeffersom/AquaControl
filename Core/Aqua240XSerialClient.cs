@@ -6,7 +6,7 @@ public sealed class Aqua240XSerialClient : IDisposable
 {
     private readonly SerialPort porta;
 
-    public Aqua240XSerialClient(string portaCom = "COM3", int baudRate = 9600)
+    public Aqua240XSerialClient(string portaCom, int baudRate = 9600)
     {
         porta = new SerialPort(portaCom, baudRate)
         {
