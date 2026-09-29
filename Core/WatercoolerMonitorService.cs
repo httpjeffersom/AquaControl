@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace WatercoolerTemp.Core;
 
 public sealed class WatercoolerMonitorService : IDisposable
@@ -5,6 +7,7 @@ public sealed class WatercoolerMonitorService : IDisposable
     private readonly CpuTemperatureReader temperatureReader;
     private readonly Aqua240XSerialClient serialClient;
     private readonly TimeSpan interval;
+    private readonly TemperatureRamp temperatureRamp = new();
 
     public WatercoolerMonitorService(
         CpuTemperatureReader temperatureReader,
@@ -17,6 +20,7 @@ public sealed class WatercoolerMonitorService : IDisposable
     }
 
     public event Action<int, byte[]>? TemperatureSent;
+    public event Action<int>? TemperatureRead;
     public event Action? TemperatureUnavailable;
     public event Action<Exception>? Error;
 
@@ -31,24 +35,40 @@ public sealed class WatercoolerMonitorService : IDisposable
     {
         try
         {
+            var elapsed = Stopwatch.StartNew();
+            TimeSpan nextReadAt = TimeSpan.Zero;
+            int? targetTemperature = null;
+
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                int? temperature = temperatureReader.ReadTemperature();
+                if (elapsed.Elapsed >= nextReadAt)
+                {
+                    int? temperature = temperatureReader.ReadTemperature();
+                    nextReadAt = elapsed.Elapsed + interval;
 
-                if (temperature is null)
-                {
-                    TemperatureUnavailable?.Invoke();
+                    if (temperature is null)
+                    {
+                        targetTemperature = null;
+                        TemperatureUnavailable?.Invoke();
+                    }
+                    else
+                    {
+                        targetTemperature = temperature.Value;
+                        TemperatureRead?.Invoke(temperature.Value);
+                    }
                 }
-                else
+
+                if (targetTemperature is int target)
                 {
-                    byte[] pacote = Aqua240XProtocol.MontarPacote(temperature.Value);
+                    int temperatureToSend = temperatureRamp.AdvanceToward(target);
+                    byte[] pacote = Aqua240XProtocol.MontarPacote(temperatureToSend);
                     serialClient.Send(pacote);
-                    TemperatureSent?.Invoke(temperature.Value, pacote);
+                    TemperatureSent?.Invoke(temperatureToSend, pacote);
                 }
 
-                await Task.Delay(interval, cancellationToken);
+                await Task.Delay(TimeSpan.FromMilliseconds(500), cancellationToken);
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

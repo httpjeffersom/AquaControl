@@ -15,7 +15,6 @@
         FontFamily="{StaticResource DisplayFont}"
         WindowStartupLocation="CenterScreen"
         Closing="WindowClosing"
-        StateChanged="WindowStateChanged"
         Icon="/Assets/AquaControl.png">
 
     <Border Background="#0B0E0F"
@@ -163,11 +162,6 @@
                     </StackPanel>
 
                 </UniformGrid>
-
-                <Button Content="{Binding ConnectionActionText}"
-                        Command="{Binding ConnectionCommand}"
-                        Style="{StaticResource ActionButton}"
-                        Margin="0,18,0,0" />
 
                 <CheckBox Content="Iniciar com o Windows"
                           IsChecked="{Binding IsStartupEnabled, Mode=TwoWay}"

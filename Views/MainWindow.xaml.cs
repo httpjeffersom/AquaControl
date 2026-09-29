@@ -12,7 +12,6 @@ namespace WatercoolerTemp.Views;
 public partial class MainWindow : Window
 {
     private readonly Forms.NotifyIcon trayIcon;
-    private readonly Forms.ToolStripMenuItem showMenuItem;
     private readonly Forms.ToolStripMenuItem startMenuItem;
     private readonly Forms.ToolStripMenuItem stopMenuItem;
     private readonly Drawing.Icon trayIconImage;
@@ -27,16 +26,12 @@ public partial class MainWindow : Window
         viewModel = new MainViewModel();
         DataContext = viewModel;
 
-        showMenuItem = new Forms.ToolStripMenuItem("Mostrar");
         startMenuItem = new Forms.ToolStripMenuItem("Iniciar monitoramento");
         stopMenuItem = new Forms.ToolStripMenuItem("Parar monitoramento");
-        showMenuItem.Click += (_, _) => ShowWindow();
         startMenuItem.Click += (_, _) => viewModel.StartMonitoring();
         stopMenuItem.Click += async (_, _) => await viewModel.StopMonitoringAsync();
 
         var menu = new Forms.ContextMenuStrip();
-        menu.Items.Add(showMenuItem);
-        menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add(startMenuItem);
         menu.Items.Add(stopMenuItem);
         menu.Items.Add(new Forms.ToolStripSeparator());
@@ -58,7 +53,7 @@ public partial class MainWindow : Window
         };
         trayIcon.DoubleClick += (_, _) =>
         {
-            if (IsVisible)
+            if (IsVisible && WindowState != WindowState.Minimized)
                 HideToTray();
             else
                 ShowWindowFromTray();
@@ -76,7 +71,7 @@ public partial class MainWindow : Window
 
     private void MinimizeWindow(object sender, RoutedEventArgs eventArgs)
     {
-        WindowState = WindowState.Minimized;
+        HideToTray();
     }
 
     private void CloseWindow(object sender, RoutedEventArgs eventArgs)
@@ -90,12 +85,6 @@ public partial class MainWindow : Window
         Hide();
     }
 
-    private void WindowStateChanged(object? sender, EventArgs eventArgs)
-    {
-        if (WindowState == WindowState.Minimized && !isClosing)
-            HideToTray();
-    }
-
     public void ShowWindowFromTray()
     {
         Show();
@@ -105,8 +94,6 @@ public partial class MainWindow : Window
         Topmost = false;
         Focus();
     }
-
-    private void ShowWindow() => ShowWindowFromTray();
 
     private void ViewModelPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
     {

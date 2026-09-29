@@ -61,3 +61,102 @@ D:\Programação\AquaControl\obj\Release\net10.0-windows\Aqua Control.dll
 D:\Programação\AquaControl\obj\Release\net10.0-windows\refint\Aqua Control.dll
 D:\Programação\AquaControl\obj\Release\net10.0-windows\WatercoolerTemp.genruntimeconfig.cache
 D:\Programação\AquaControl\obj\Release\net10.0-windows\ref\Aqua Control.dll
+D:\Programação\AquaControl\bin\Release\net10.0-windows\Assets\AquaControl.ico
+D:\Programação\AquaControl\bin\Release\net10.0-windows\Aqua Control.pdb
+D:\Programação\AquaControl\obj\Release\net10.0-windows\Aqua Control_Content.g.cs
+D:\Programação\AquaControl\obj\Release\net10.0-windows\WatercoolerTemp.sourcelink.json
+D:\Programação\AquaControl\obj\Release\net10.0-windows\Aqua Control.pdb
+D:\Programação\AquaControl\bin\Release\Atualizado\Assets\AquaControl.ico
+D:\Programação\AquaControl\bin\Release\Atualizado\Aqua Control.exe
+D:\Programação\AquaControl\bin\Release\Atualizado\Aqua Control.deps.json
+D:\Programação\AquaControl\bin\Release\Atualizado\Aqua Control.runtimeconfig.json
+D:\Programação\AquaControl\bin\Release\Atualizado\Aqua Control.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\Aqua Control.pdb
+D:\Programação\AquaControl\bin\Release\Atualizado\HidSharp.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\LibreHardwareMonitorLib.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\System.IO.Ports.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\System.Management.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-arm\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-arm\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-arm64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-arm64\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-armel\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-armel\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-x64\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-x86\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\osx\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\osx\native\libMonoPosixHelper.dylib
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\win-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\win-x64\native\MonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\win-x64\native\libMonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\win-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\win-x86\native\MonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\win-x86\native\libMonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\android-arm\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\android-arm64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\android-x64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\android-x86\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-bionic-arm64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-bionic-x64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-musl-arm\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-musl-arm64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-musl-x64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\maccatalyst-arm64\native\libSystem.IO.Ports.Native.dylib
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\maccatalyst-x64\native\libSystem.IO.Ports.Native.dylib
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\unix\lib\net9.0\System.IO.Ports.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\win\lib\net9.0\System.IO.Ports.dll
+D:\Programação\AquaControl\bin\Release\Atualizado\runtimes\win\lib\net9.0\System.Management.dll
+D:\Programação\AquaControl\bin\Release\Final\Assets\AquaControl.ico
+D:\Programação\AquaControl\bin\Release\Final\Aqua Control.exe
+D:\Programação\AquaControl\bin\Release\Final\Aqua Control.deps.json
+D:\Programação\AquaControl\bin\Release\Final\Aqua Control.runtimeconfig.json
+D:\Programação\AquaControl\bin\Release\Final\Aqua Control.dll
+D:\Programação\AquaControl\bin\Release\Final\Aqua Control.pdb
+D:\Programação\AquaControl\bin\Release\Final\HidSharp.dll
+D:\Programação\AquaControl\bin\Release\Final\LibreHardwareMonitorLib.dll
+D:\Programação\AquaControl\bin\Release\Final\System.IO.Ports.dll
+D:\Programação\AquaControl\bin\Release\Final\System.Management.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-arm\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-arm\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-arm64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-arm64\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-armel\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-armel\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-x64\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-x86\native\libMonoPosixHelper.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\osx\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\osx\native\libMonoPosixHelper.dylib
+D:\Programação\AquaControl\bin\Release\Final\runtimes\win-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\win-x64\native\MonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\win-x64\native\libMonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\win-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\win-x86\native\MonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\win-x86\native\libMonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\android-arm\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\android-arm64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\android-x64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\android-x86\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-bionic-arm64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-bionic-x64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-musl-arm\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-musl-arm64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-musl-x64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+D:\Programação\AquaControl\bin\Release\Final\runtimes\maccatalyst-arm64\native\libSystem.IO.Ports.Native.dylib
+D:\Programação\AquaControl\bin\Release\Final\runtimes\maccatalyst-x64\native\libSystem.IO.Ports.Native.dylib
+D:\Programação\AquaControl\bin\Release\Final\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+D:\Programação\AquaControl\bin\Release\Final\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+D:\Programação\AquaControl\bin\Release\Final\runtimes\unix\lib\net9.0\System.IO.Ports.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\win\lib\net9.0\System.IO.Ports.dll
+D:\Programação\AquaControl\bin\Release\Final\runtimes\win\lib\net9.0\System.Management.dll

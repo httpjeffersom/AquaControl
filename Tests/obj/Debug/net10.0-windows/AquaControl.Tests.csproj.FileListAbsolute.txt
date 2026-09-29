@@ -142,3 +142,4 @@ D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.runtim
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.exe
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.dll
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.pdb
+D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Assets\AquaControl.ico

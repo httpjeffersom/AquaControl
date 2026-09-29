@@ -70,7 +70,7 @@ internal class Program
             return;
         }
 
-        Console.WriteLine("Enviando temperatura a cada 1 segundo. Pressione Ctrl+C para parar.\n");
+        Console.WriteLine("Leitura da CPU a cada 1 segundo; envio ao display a cada 500 ms. Pressione Ctrl+C para parar.\n");
 
         try
         {

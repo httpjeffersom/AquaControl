@@ -45,12 +45,9 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
                 Connect();
         };
 
-        ConnectionCommand = new RelayCommand(ToggleConnection);
         reconnectTimer.Start();
         Connect();
     }
-
-    public RelayCommand ConnectionCommand { get; }
 
     public bool IsStartupEnabled
     {
@@ -124,25 +121,14 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
             if (SetField(ref isConnected, value))
             {
                 OnPropertyChanged(nameof(StatusBrush));
-                RefreshCommands();
             }
         }
     }
 
-    public string ConnectionActionText => IsConnected ? "DESCONECTAR" : "CONECTAR";
-
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<int>? HighTemperatureAlert;
 
-    public void ToggleConnection()
-    {
-        if (IsConnected)
-            _ = DisconnectAsync();
-        else
-            Connect();
-    }
-
-    public void Connect()
+    private void Connect()
     {
         if (IsConnected)
             return;
@@ -152,6 +138,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
             var reader = new CpuTemperatureReader();
             var client = new Aqua240XSerialClient(PortName, 9600);
             service = new WatercoolerMonitorService(reader, client, TimeSpan.FromMilliseconds(IntervalMs));
+            service.TemperatureRead += OnTemperatureRead;
             service.TemperatureSent += OnTemperatureSent;
             service.TemperatureUnavailable += OnTemperatureUnavailable;
             service.Error += OnServiceError;
@@ -217,19 +204,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         }
     }
 
-    private async Task DisconnectAsync()
-    {
-        if (monitorCancellation is not null)
-            await StopMonitoringAsync();
-
-        service?.Dispose();
-        service = null;
-        IsConnected = false;
-        Status = "DESCONECTADO";
-        Message = "PRONTO";
-    }
-
-    private void OnTemperatureSent(int temperature, byte[] pacote)
+    private void OnTemperatureRead(int temperature)
     {
         System.Windows.Application.Current.Dispatcher.Invoke(() =>
         {
@@ -240,11 +215,16 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
             minimumTemperature = minimumTemperature is null ? temperature : Math.Min(minimumTemperature.Value, temperature);
             maximumTemperature = maximumTemperature is null ? temperature : Math.Max(maximumTemperature.Value, temperature);
             displayTimer.Start();
-            Message = $"TEMPERATURA ENVIADA  {temperature:00} °C";
             OnPropertyChanged(nameof(MinimumTemperatureText));
             OnPropertyChanged(nameof(MaximumTemperatureText));
             OnPropertyChanged(nameof(AverageTemperatureText));
         });
+    }
+
+    private void OnTemperatureSent(int temperature, byte[] pacote)
+    {
+        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            Message = $"TEMPERATURA ENVIADA  {temperature:00} °C");
     }
 
     private void EvaluateTemperatureAlert(int temperature)
@@ -324,12 +304,6 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         service = null;
         displayTimer.Stop();
         reconnectTimer.Stop();
-    }
-
-    private void RefreshCommands()
-    {
-        OnPropertyChanged(nameof(ConnectionActionText));
-        ConnectionCommand.Refresh();
     }
 
     private void ResetStatistics()
