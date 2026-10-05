@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AquaControl.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5cbb1f930d33d98029e98ba29b39ff39afa7763c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b4325b7cb4739a4ab2b75b94ad2e217c0ac2592")]
 [assembly: System.Reflection.AssemblyProductAttribute("AquaControl.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AquaControl.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

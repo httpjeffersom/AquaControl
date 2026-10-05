@@ -1,0 +1,5 @@
+D:\Programação\AquaControl\bin\Release\DesktopBuild\Aqua Control.pdb
+D:\Programação\AquaControl\bin\Release\DesktopBuild\Assets\AquaControl.ico
+D:\Programação\AquaControl\bin\Release\DesktopBuild\MonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\DesktopBuild\libMonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\DesktopBuild\Aqua Control.exe

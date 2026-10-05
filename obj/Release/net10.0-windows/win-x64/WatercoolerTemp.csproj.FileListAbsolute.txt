@@ -1,0 +1,34 @@
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\Assets\AquaControl.ico
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\Aqua Control.exe
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\Aqua Control.deps.json
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\Aqua Control.runtimeconfig.json
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\Aqua Control.dll
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\Aqua Control.pdb
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\HidSharp.dll
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\LibreHardwareMonitorLib.dll
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\Mono.Posix.NETStandard.dll
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\System.IO.Ports.dll
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\System.Management.dll
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\MonoPosixHelper.dll
+D:\Programação\AquaControl\bin\Release\net10.0-windows\win-x64\libMonoPosixHelper.dll
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\WatercoolerTemp.csproj.AssemblyReference.cache
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\App.baml
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Views\MainWindow.g.cs
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\App.g.cs
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Aqua Control_Content.g.cs
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\GeneratedInternalTypeHelper.g.cs
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Aqua Control_MarkupCompile.cache
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Aqua Control_MarkupCompile.lref
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Views\MainWindow.baml
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Aqua Control.g.resources
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\WatercoolerTemp.GeneratedMSBuildEditorConfig.editorconfig
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\WatercoolerTemp.AssemblyInfoInputs.cache
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\WatercoolerTemp.AssemblyInfo.cs
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\WatercoolerTemp.csproj.CoreCompileInputs.cache
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\WatercoolerTemp.sourcelink.json
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Watercoo.3B539D18.Up2Date
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Aqua Control.dll
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\refint\Aqua Control.dll
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\Aqua Control.pdb
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\WatercoolerTemp.genruntimeconfig.cache
+D:\Programação\AquaControl\obj\Release\net10.0-windows\win-x64\ref\Aqua Control.dll
