@@ -2,9 +2,9 @@
 
 O aplicativo exige privilégios de administrador para acessar os sensores de hardware. A opção "Iniciar com o Windows" registra uma tarefa no Agendador de Tarefas com nível de execução mais alto, evitando depender de uma entrada comum na chave `Run` do Registro.
 
-## Configurar
+## Configurar.
 
-1. Abra o Aqua Control. O Windows solicitará elevação por causa do manifesto do aplicativo.
+1. Abra o Aqua Control, O Windows solicitará elevação por causa do manifesto do aplicativo.
 2. Marque "Iniciar com o Windows".
 3. A tarefa `AquaControl` será criada para iniciar no logon do usuário atual, com privilégios mais altos e o argumento `--startup`.
 
