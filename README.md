@@ -10,7 +10,7 @@ O projeto foi criado com foco em compatibilidade real com Windows 11, sem depend
 
 ## Visão geral
 
-O Pichau Aqua 240X e modelos relacionados usam um controlador CH340 para comunicação USB em modo serial virtual. O projeto detecta a porta correta automaticamente, lê a temperatura do processador pelo Windows e envia o dado para o display do cooler.
+O pPichau Aqua 240X e modelos relacionados usam um controlador CH340 para comunicação USB em modo serial virtual. O projeto detecta a porta correta automaticamente, lê a temperatura do processador pelo Windows e envia o dado para o display do cooler.
 
 A lógica de leitura usa monitoramento de hardware em modo usuário e a comunicação com o cooler é feita via porta serial do sistema operacional, sem a criação de um driver personalizado.
 
