@@ -10,7 +10,7 @@ O aplicativo exige privilégios de administrador para acessar os sensores de har
 
 Na próxima entrada no Windows, o aplicativo será iniciado elevado e oculto na bandeja. A tarefa é executada na sessão interativa do usuário. Para desativar, desmarque a opção no aplicativo.
 
-Ao habilitar a tarefa, o aplicativo também remove a antiga entrada `WatercoolerTemp` da chave `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, evitando duas tentativas de inicialização.
+Ao habilitar a tarefa, o aplicativo também remove a antiga entrada `WatercoolerTemp` da chave `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`,evitando duas tentativas de inicialização.
 
 ## Verificar ou reparar
 
