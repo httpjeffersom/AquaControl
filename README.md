@@ -40,8 +40,8 @@ Aqua 240X
 Aqua 360X
 
 O projeto foi validado para os modelos:
--
-  Pichau Aqua 120X 
+
+- Pichau Aqua 120X 
 - Pichau Aqua 240X
 - Pichau Aqua 360X
 
