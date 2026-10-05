@@ -92,9 +92,10 @@ Em seguida, execute o aplicativo gerado ou abra a solução no Visual Studio.
 ### Compilar
 
 ```bash
-dotnet publish -c Release -r win-x64 --self-contained false
+dotnet publish -c Release -r win-x64 --self-contained false```
+
 O executável será publicado em bin/Release/net10.0-windows/win-x64/publish/Aqua Control.exe.
-```
+
 
 O software oficial do watercooler deve permanecer fechado enquanto o Aqua Control usa a porta serial do dispositivo. A porta é detectada automaticamente pelo VID/PID do controlador CH340.
 
