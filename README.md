@@ -1,4 +1,4 @@
-# Aqua Control
+# Aqua Controll
 
 Aqua Control é um aplicativo Windows para monitorar a temperatura da CPU e enviar esse valor para o display do watercooler Pichau Aqua 240X e suas variantes.
 
