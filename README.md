@@ -35,10 +35,6 @@ A lógica de leitura usa monitoramento de hardware em modo usuário e a comunica
 
 ## Hardware suportado
 
-Aqua 120x
-Aqua 240X
-Aqua 360X
-
 O projeto foi validado para os modelos:
 
 - Pichau Aqua 120X 
