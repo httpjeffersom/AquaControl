@@ -15,61 +15,165 @@
         FontFamily="{StaticResource DisplayFont}"
         WindowStartupLocation="CenterScreen"
         Closing="WindowClosing"
-        StateChanged="WindowStateChanged">
-    <Border Background="#0B0E0F" BorderBrush="#26302F" BorderThickness="1" CornerRadius="12" Padding="18">
+        Icon="/Assets/AquaControl.png">
+
+    <Border Background="#0B0E0F"
+            BorderBrush="#26302F"
+            BorderThickness="1"
+            CornerRadius="12"
+            Padding="18">
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="28" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Background="Transparent" Cursor="SizeAll" MouseLeftButtonDown="DragWindow">
-                <TextBlock Text="AQUA CONTROL" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#9AA8A5" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="−" Click="MinimizeWindow" Style="{StaticResource WindowButton}" />
-                    <Button Content="×" Click="CloseWindow" Style="{StaticResource WindowButton}" />
+            <Grid Grid.Row="0"
+                  Background="Transparent"
+                  Cursor="SizeAll"
+                  MouseLeftButtonDown="DragWindow">
+
+                <TextBlock Text="AQUA CONTROL"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="#9AA8A5" />
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+
+                    <Button Content="−"
+                            Click="MinimizeWindow"
+                            Style="{StaticResource WindowButton}" />
+
+                    <Button Content="×"
+                            Click="CloseWindow"
+                            Style="{StaticResource WindowButton}" />
+
                 </StackPanel>
             </Grid>
 
-            <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid Width="290" Height="210">
-                    <controls:TemperatureRing Progress="{Binding Progress}" IndicatorBrush="{Binding IndicatorBrush}" />
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="TEMPERATURA DA CPU" FontSize="10" HorizontalAlignment="Center" Foreground="#778582" />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
-                            <TextBlock Text="{Binding TemperatureText}" FontFamily="Terminal" FontSize="46" Foreground="{Binding IndicatorBrush}" />
-                            <TextBlock Text="°C" FontSize="13" Margin="5,24,0,0" Foreground="{Binding IndicatorBrush}" />
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                <Grid Width="290"
+                      Height="210">
+
+                    <controls:TemperatureRing
+                        Progress="{Binding Progress}"
+                        IndicatorBrush="{Binding IndicatorBrush}" />
+
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+
+                        <TextBlock Text="TEMPERATURA DA CPU"
+                                   FontSize="10"
+                                   HorizontalAlignment="Center"
+                                   Foreground="#778582" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,4,0,0">
+
+                            <TextBlock Text="{Binding TemperatureText}"
+                                       FontFamily="Terminal"
+                                       FontSize="46"
+                                       Foreground="{Binding IndicatorBrush}" />
+
+                            <TextBlock Text="°C"
+                                       FontSize="13"
+                                       Margin="5,24,0,0"
+                                       Foreground="{Binding IndicatorBrush}" />
+
                         </StackPanel>
                     </StackPanel>
                 </Grid>
 
-                <StackPanel HorizontalAlignment="Center" Margin="0,6,0,0">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Ellipse Width="7" Height="7" Fill="{Binding StatusBrush}" VerticalAlignment="Center" />
-                        <TextBlock Text="DISPOSITIVO" FontSize="10" Margin="7,0,0,0" Foreground="#9AA8A5" />
+                <StackPanel HorizontalAlignment="Center"
+                            Margin="0,6,0,0">
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+
+                        <Ellipse Width="7"
+                                 Height="7"
+                                 Fill="{Binding StatusBrush}"
+                                 VerticalAlignment="Center" />
+
+                        <TextBlock Text="DISPOSITIVO"
+                                   FontSize="10"
+                                   Margin="7,0,0,0"
+                                   Foreground="#9AA8A5" />
+
                     </StackPanel>
-                    <TextBlock Text="{Binding Status}" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0" />
+
+                    <TextBlock Text="{Binding Status}"
+                               FontSize="11"
+                               HorizontalAlignment="Center"
+                               Margin="0,2,0,0" />
+
                 </StackPanel>
 
-                <UniformGrid Rows="1" Columns="3" Width="270" Margin="0,16,0,0">
+                <UniformGrid Rows="1"
+                             Columns="3"
+                             Width="270"
+                             Margin="0,16,0,0">
+
                     <StackPanel Margin="4,0">
-                        <TextBlock Text="MÍNIMA" FontSize="9" Foreground="#5F706C" HorizontalAlignment="Center" />
-                        <TextBlock Text="{Binding MinimumTemperatureText}" FontSize="13" HorizontalAlignment="Center" />
+
+                        <TextBlock Text="MÍNIMA"
+                                   FontSize="9"
+                                   Foreground="#5F706C"
+                                   HorizontalAlignment="Center" />
+
+                        <TextBlock Text="{Binding MinimumTemperatureText}"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center" />
+
                     </StackPanel>
+
                     <StackPanel Margin="4,0">
-                        <TextBlock Text="MÉDIA" FontSize="9" Foreground="#5F706C" HorizontalAlignment="Center" />
-                        <TextBlock Text="{Binding AverageTemperatureText}" FontSize="13" HorizontalAlignment="Center" />
+
+                        <TextBlock Text="MÉDIA"
+                                   FontSize="9"
+                                   Foreground="#5F706C"
+                                   HorizontalAlignment="Center" />
+
+                        <TextBlock Text="{Binding AverageTemperatureText}"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center" />
+
                     </StackPanel>
+
                     <StackPanel Margin="4,0">
-                        <TextBlock Text="MÁXIMA" FontSize="9" Foreground="#5F706C" HorizontalAlignment="Center" />
-                        <TextBlock Text="{Binding MaximumTemperatureText}" FontSize="13" HorizontalAlignment="Center" />
+
+                        <TextBlock Text="MÁXIMA"
+                                   FontSize="9"
+                                   Foreground="#5F706C"
+                                   HorizontalAlignment="Center" />
+
+                        <TextBlock Text="{Binding MaximumTemperatureText}"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center" />
+
                     </StackPanel>
+
                 </UniformGrid>
 
-                <Button Content="{Binding ConnectionActionText}" Command="{Binding ConnectionCommand}" Style="{StaticResource ActionButton}" Margin="0,18,0,0" />
+                <CheckBox Content="Iniciar com o Windows"
+                          IsChecked="{Binding IsStartupEnabled, Mode=TwoWay}"
+                          FontSize="11"
+                          Foreground="#778582"
+                          HorizontalAlignment="Center"
+                          Margin="0,24,0,0" />
 
-                <CheckBox Content="Iniciar com o Windows" IsChecked="{Binding IsStartupEnabled, Mode=TwoWay}" FontSize="11" Foreground="#778582" HorizontalAlignment="Center" Margin="0,24,0,0" />
             </StackPanel>
+
         </Grid>
+
     </Border>
+
 </Window>

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bBTjDXTUsTE=",
+  "dgSpecHash": "7JE/54WygDI=",
   "success": true,
   "projectFilePath": "D:\\Programação\\AquaControl\\WatercoolerTemp.csproj",
   "expectedPackageFiles": [
@@ -28,5 +28,15 @@
     "C:\\Users\\Jeffersom\\.nuget\\packages\\system.io.ports\\9.0.0\\system.io.ports.9.0.0.nupkg.sha512",
     "C:\\Users\\Jeffersom\\.nuget\\packages\\system.management\\9.0.0\\system.management.9.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "message": "Problema ao ler o arquivo de cache D:\\Programação\\AquaControl\\obj\\project.nuget.cache: '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
+      "projectPath": "D:\\Programação\\AquaControl\\WatercoolerTemp.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\Programação\\AquaControl\\WatercoolerTemp.csproj",
+      "targetGraphs": []
+    }
+  ]
 }

@@ -110,13 +110,18 @@ D:\Projetos\WatercoolerTemp\bin\ValidationBuild\runtimes\osx-x64\native\libSyste
 D:\Projetos\WatercoolerTemp\bin\ValidationBuild\runtimes\unix\lib\net9.0\System.IO.Ports.dll
 D:\Projetos\WatercoolerTemp\bin\ValidationBuild\runtimes\win\lib\net9.0\System.IO.Ports.dll
 D:\Projetos\WatercoolerTemp\bin\ValidationBuild\runtimes\win\lib\net9.0\System.Management.dll
-D:\Programação\AquaControl\bin\Debug\net10.0-windows\WatercoolerTemp.exe
-D:\Programação\AquaControl\bin\Debug\net10.0-windows\WatercoolerTemp.deps.json
-D:\Programação\AquaControl\bin\Debug\net10.0-windows\WatercoolerTemp.runtimeconfig.json
-D:\Programação\AquaControl\bin\Debug\net10.0-windows\WatercoolerTemp.dll
-D:\Programação\AquaControl\bin\Debug\net10.0-windows\WatercoolerTemp.pdb
-D:\Programação\AquaControl\bin\Debug\net10.0-windows\HidSharp.dll
 D:\Programação\AquaControl\bin\Debug\net10.0-windows\LibreHardwareMonitorLib.dll
+D:\Programação\AquaControl\bin\Debug\net10.0-windows\runtimes\win\lib\net9.0\System.IO.Ports.dll
+D:\Programação\AquaControl\bin\Debug\net10.0-windows\Aqua Control.exe
+D:\Programação\AquaControl\bin\Debug\net10.0-windows\Aqua Control.dll
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.csproj.AssemblyReference.cache
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\App.baml
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\App.g.cs
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\Aqua Control_MarkupCompile.cache
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\Views\MainWindow.g.cs
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\Aqua Control_MarkupCompile.lref
+D:\Programação\AquaControl\bin\Debug\net10.0-windows\HidSharp.dll
 D:\Programação\AquaControl\bin\Debug\net10.0-windows\System.IO.Ports.dll
 D:\Programação\AquaControl\bin\Debug\net10.0-windows\System.Management.dll
 D:\Programação\AquaControl\bin\Debug\net10.0-windows\runtimes\linux-arm\lib\netstandard2.0\Mono.Posix.NETStandard.dll
@@ -154,25 +159,22 @@ D:\Programação\AquaControl\bin\Debug\net10.0-windows\runtimes\maccatalyst-x64\
 D:\Programação\AquaControl\bin\Debug\net10.0-windows\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
 D:\Programação\AquaControl\bin\Debug\net10.0-windows\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
 D:\Programação\AquaControl\bin\Debug\net10.0-windows\runtimes\unix\lib\net9.0\System.IO.Ports.dll
-D:\Programação\AquaControl\bin\Debug\net10.0-windows\runtimes\win\lib\net9.0\System.IO.Ports.dll
 D:\Programação\AquaControl\bin\Debug\net10.0-windows\runtimes\win\lib\net9.0\System.Management.dll
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.csproj.AssemblyReference.cache
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\App.baml
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\Views\MainWindow.g.cs
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\App.g.cs
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\GeneratedInternalTypeHelper.g.cs
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp_MarkupCompile.cache
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp_MarkupCompile.lref
 D:\Programação\AquaControl\obj\Debug\net10.0-windows\Views\MainWindow.baml
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.g.resources
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\Aqua Control.g.resources
 D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.GeneratedMSBuildEditorConfig.editorconfig
 D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.AssemblyInfoInputs.cache
 D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.AssemblyInfo.cs
 D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.csproj.CoreCompileInputs.cache
 D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.sourcelink.json
 D:\Programação\AquaControl\obj\Debug\net10.0-windows\Watercoo.3B539D18.Up2Date
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.dll
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\refint\WatercoolerTemp.dll
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.pdb
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\Aqua Control.dll
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\refint\Aqua Control.dll
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\Aqua Control.pdb
+D:\Programação\AquaControl\bin\Debug\net10.0-windows\Aqua Control.deps.json
+D:\Programação\AquaControl\bin\Debug\net10.0-windows\Aqua Control.runtimeconfig.json
+D:\Programação\AquaControl\bin\Debug\net10.0-windows\Aqua Control.pdb
 D:\Programação\AquaControl\obj\Debug\net10.0-windows\WatercoolerTemp.genruntimeconfig.cache
-D:\Programação\AquaControl\obj\Debug\net10.0-windows\ref\WatercoolerTemp.dll
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\ref\Aqua Control.dll
+D:\Programação\AquaControl\bin\Debug\net10.0-windows\Assets\AquaControl.ico
+D:\Programação\AquaControl\obj\Debug\net10.0-windows\Aqua Control_Content.g.cs

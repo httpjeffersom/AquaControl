@@ -9,8 +9,8 @@
       "AquaControl.Tests/1.0.0": {
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "17.14.1",
-          "WatercoolerTemp": "1.0.0",
-          "xunit": "2.9.3"
+          "xunit": "2.9.3",
+          "Aqua Control.Reference": "1.0.0.0"
         },
         "runtime": {
           "AquaControl.Tests.dll": {}
@@ -660,13 +660,21 @@
           }
         }
       },
-      "WatercoolerTemp/1.0.0": {
+      "Aqua Control/1.0.0": {
         "dependencies": {
           "LibreHardwareMonitorLib": "0.9.4",
-          "System.IO.Ports": "9.0.0"
+          "System.IO.Ports": "9.0.0",
+          "System.Management": "9.0.0"
         },
         "runtime": {
-          "WatercoolerTemp.dll": {
+          "Aqua Control.dll": {
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "Aqua Control.Reference/1.0.0.0": {
+        "runtime": {
+          "Aqua Control.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -911,8 +919,13 @@
       "path": "xunit.extensibility.execution/2.9.3",
       "hashPath": "xunit.extensibility.execution.2.9.3.nupkg.sha512"
     },
-    "WatercoolerTemp/1.0.0": {
+    "Aqua Control/1.0.0": {
       "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Aqua Control.Reference/1.0.0.0": {
+      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }

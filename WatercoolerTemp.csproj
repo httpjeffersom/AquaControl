@@ -5,15 +5,28 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Aqua Control</AssemblyName>
+    <AssemblyTitle>Aqua Control</AssemblyTitle>
+    <Product>Aqua Control</Product>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\AquaControl.ico</ApplicationIcon>
     <RootNamespace>WatercoolerTemp</RootNamespace>
   </PropertyGroup>
+
+  
 
   <ItemGroup>
     <Compile Remove="Program.cs" />
     <Compile Remove="Tests\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\AquaControl.png" />
+    <Content Include="Assets\AquaControl.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +36,17 @@
 
     <!-- Porta serial (equivalente ao pyserial) -->
     <PackageReference Include="System.IO.Ports" Version="9.0.0" />
+    <PackageReference Include="System.Management" Version="9.0.0" />
   </ItemGroup>
+
+  <!-- Garantir que as DLLs de dependências sejam copiadas para a pasta de output -->
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Runtime.TieredCompilation" Value="true" />
+  </ItemGroup>
+
+  <!-- Alterar o tipo de build para WinExe de forma explícita -->
+  <PropertyGroup>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
 
 </Project>

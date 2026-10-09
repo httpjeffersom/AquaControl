@@ -361,7 +361,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "D:\\Programação\\AquaControl\\WatercoolerTemp.csproj",
-        "projectName": "WatercoolerTemp",
+        "projectName": "Aqua Control",
         "projectPath": "D:\\Programação\\AquaControl\\WatercoolerTemp.csproj",
         "packagesPath": "C:\\Users\\Jeffersom\\.nuget\\packages\\",
         "outputPath": "D:\\Programação\\AquaControl\\obj\\",
@@ -404,6 +404,10 @@
               "version": "[0.9.4, )"
             },
             "System.IO.Ports": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "System.Management": {
               "target": "Package",
               "version": "[9.0.0, )"
             }

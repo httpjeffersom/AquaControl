@@ -10,12 +10,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("WatercoolerTemp")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("Aqua Control")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+357004de07dc243e82d65315be8b7b6794963dae")]
-[assembly: System.Reflection.AssemblyProductAttribute("WatercoolerTemp")]
-[assembly: System.Reflection.AssemblyTitleAttribute("WatercoolerTemp")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0eaea37b8658247a97a7fd090f559ac96a1cbd1e")]
+[assembly: System.Reflection.AssemblyProductAttribute("Aqua Control")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Aqua Control")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]

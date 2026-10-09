@@ -3,8 +3,8 @@
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
     <security>
       <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
-        <!-- Aplicação desktop normal, sem elevação de privilégios -->
-        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+        <!-- Requer privilégios de administrador para acessar RegistryKey do Windows Startup -->
+        <requestedExecutionLevel level="requireAdministrator" uiAccess="false" />
       </requestedPrivileges>
     </security>
   </trustInfo>

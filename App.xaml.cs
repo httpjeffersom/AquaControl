@@ -40,6 +40,8 @@ public partial class App : System.Windows.Application
 
 			MainWindow = new MainWindow();
 			MainWindow.Show();
+			if (StartupManager.IsStartupLaunch(eventArgs.Args))
+				(MainWindow as MainWindow)?.HideToTray();
 		}
 		catch (Exception exception)
 		{

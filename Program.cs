@@ -1,5 +1,5 @@
 // Envia a temperatura da CPU para o display do watercooler Pichau Aqua 240X
-// (chip WCH CH340, VID 0x1a86 / PID 0x484a), via porta serial virtual (COM3).
+// (chip WCH CH340, VID 0x1a86 / PID 0x484a), via porta serial virtual.
 //
 // Baseado na engenharia reversa do protocolo feita capturando o tráfego USB
 // do software oficial com Wireshark + USBPcap.
@@ -16,7 +16,7 @@
 // precisa ser calculado dinamicamente em vez de fixo.
 //
 // Requer rodar como Administrador (já configurado via app.manifest) e que
-// o software oficial do watercooler esteja FECHADO (ele usa a COM3 sozinho).
+// o software oficial do watercooler esteja FECHADO (ele usa a porta serial sozinho).
 
 using System;
 using System.Threading;
@@ -27,7 +27,6 @@ namespace WatercoolerTemp;
 internal class Program
 {
     // ==== CONFIGURAÇÃO ====
-    private const string PortaCom = "COM3";      // ajuste se a porta mudar
     private const int BaudRate = 9600;            // valor comum para CH340
     private const int IntervaloMs = 1000;         // de quanto em quanto tempo atualizar
 
@@ -35,8 +34,20 @@ internal class Program
     {
         Console.WriteLine("=== Aqua Control - Display do Pichau Aqua 240X ===\n");
 
+        string portaCom;
+        try
+        {
+            portaCom = Aqua240XPortDiscovery.FindPort();
+            Console.WriteLine($"Watercooler encontrado na porta {portaCom}.\n");
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine($"ERRO ao localizar o watercooler: {exception.Message}");
+            return;
+        }
+
         using var temperatureReader = new CpuTemperatureReader();
-        using var serialClient = new Aqua240XSerialClient(PortaCom, BaudRate);
+        using var serialClient = new Aqua240XSerialClient(portaCom, BaudRate);
         using var service = new WatercoolerMonitorService(
             temperatureReader,
             serialClient,
@@ -57,20 +68,20 @@ internal class Program
         try
         {
             service.Open();
-            Console.WriteLine($"Porta {PortaCom} aberta com sucesso.\n");
+            Console.WriteLine($"Porta {portaCom} aberta com sucesso.\n");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"ERRO ao abrir a porta {PortaCom}: {ex.Message}");
+            Console.WriteLine($"ERRO ao abrir a porta {portaCom}: {ex.Message}");
             Console.WriteLine("Verifique se:");
             Console.WriteLine("  1. O software oficial do watercooler está FECHADO");
-            Console.WriteLine("  2. A porta COM3 está correta (confira no Gerenciador de Dispositivos)");
+            Console.WriteLine("  2. O watercooler está conectado e o driver CH340 está instalado");
             Console.WriteLine("\nPressione qualquer tecla para sair...");
             Console.ReadKey();
             return;
         }
 
-        Console.WriteLine("Enviando temperatura a cada 1 segundo. Pressione Ctrl+C para parar.\n");
+        Console.WriteLine("Leitura da CPU a cada 1 segundo; envio ao display a cada 500 ms. Pressione Ctrl+C para parar.\n");
 
         try
         {

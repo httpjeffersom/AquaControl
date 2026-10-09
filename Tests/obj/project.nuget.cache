@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "wbRj6izEEmc=",
+  "dgSpecHash": "MtjjLFDoqx4=",
   "success": true,
   "projectFilePath": "D:\\Programação\\AquaControl\\Tests\\AquaControl.Tests.csproj",
   "expectedPackageFiles": [
@@ -42,5 +42,15 @@
     "C:\\Users\\Jeffersom\\.nuget\\packages\\xunit.extensibility.execution\\2.9.3\\xunit.extensibility.execution.2.9.3.nupkg.sha512",
     "C:\\Users\\Jeffersom\\.nuget\\packages\\xunit.runner.visualstudio\\3.1.4\\xunit.runner.visualstudio.3.1.4.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "message": "Problema ao ler o arquivo de cache D:\\Programação\\AquaControl\\Tests\\obj\\project.nuget.cache: '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
+      "projectPath": "D:\\Programação\\AquaControl\\Tests\\AquaControl.Tests.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\Programação\\AquaControl\\Tests\\AquaControl.Tests.csproj",
+      "targetGraphs": []
+    }
+  ]
 }

@@ -1,9 +1,6 @@
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\.msCoverageSourceRootsMapping_AquaControl.Tests
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\testhost.dll
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\xunit.abstractions.dll
-D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\WatercoolerTemp.deps.json
-D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\WatercoolerTemp.runtimeconfig.json
-D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\WatercoolerTemp.exe
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\testhost.exe
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\xunit.runner.visualstudio.testadapter.dll
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\AquaControl.Tests.deps.json
@@ -128,8 +125,6 @@ D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\runtimes\osx-x64\na
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\runtimes\unix\lib\net9.0\System.IO.Ports.dll
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\runtimes\win\lib\net9.0\System.IO.Ports.dll
 D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\runtimes\win\lib\net9.0\System.Management.dll
-D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\WatercoolerTemp.dll
-D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\WatercoolerTemp.pdb
 D:\Programação\AquaControl\Tests\obj\Debug\net10.0-windows\AquaControl.Tests.csproj.AssemblyReference.cache
 D:\Programação\AquaControl\Tests\obj\Debug\net10.0-windows\AquaControl.Tests.GeneratedMSBuildEditorConfig.editorconfig
 D:\Programação\AquaControl\Tests\obj\Debug\net10.0-windows\AquaControl.Tests.AssemblyInfoInputs.cache
@@ -142,3 +137,9 @@ D:\Programação\AquaControl\Tests\obj\Debug\net10.0-windows\refint\AquaControl.
 D:\Programação\AquaControl\Tests\obj\Debug\net10.0-windows\AquaControl.Tests.pdb
 D:\Programação\AquaControl\Tests\obj\Debug\net10.0-windows\AquaControl.Tests.genruntimeconfig.cache
 D:\Programação\AquaControl\Tests\obj\Debug\net10.0-windows\ref\AquaControl.Tests.dll
+D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.deps.json
+D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.runtimeconfig.json
+D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.exe
+D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.dll
+D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Aqua Control.pdb
+D:\Programação\AquaControl\Tests\bin\Debug\net10.0-windows\Assets\AquaControl.ico
