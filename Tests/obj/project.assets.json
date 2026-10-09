@@ -2927,11 +2927,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\Programação\\AquaControl\\Tests\\AquaControl.Tests.csproj",
+      "projectUniqueName": "D:\\Programação\\AquaControl\\Tests\\AquaControl.Tests.csproj",
       "projectName": "AquaControl.Tests",
-      "projectPath": "d:\\Programação\\AquaControl\\Tests\\AquaControl.Tests.csproj",
+      "projectPath": "D:\\Programação\\AquaControl\\Tests\\AquaControl.Tests.csproj",
       "packagesPath": "C:\\Users\\Jeffersom\\.nuget\\packages\\",
-      "outputPath": "d:\\Programação\\AquaControl\\Tests\\obj\\",
+      "outputPath": "D:\\Programação\\AquaControl\\Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Jeffersom\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -2999,7 +2999,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

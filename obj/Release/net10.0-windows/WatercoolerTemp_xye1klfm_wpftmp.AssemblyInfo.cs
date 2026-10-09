@@ -10,12 +10,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("AquaControl.Tests")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("Aqua Control")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+357004de07dc243e82d65315be8b7b6794963dae")]
-[assembly: System.Reflection.AssemblyProductAttribute("AquaControl.Tests")]
-[assembly: System.Reflection.AssemblyTitleAttribute("AquaControl.Tests")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bda96a6684a39461b0b22a93caae95e6258c8387")]
+[assembly: System.Reflection.AssemblyProductAttribute("Aqua Control")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Aqua Control")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]

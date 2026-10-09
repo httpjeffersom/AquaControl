@@ -1,0 +1,8 @@
+C:\Users\Jeffersom\Desktop\Aqua Control 1.0.3\Aqua Control.exe
+C:\Users\Jeffersom\Desktop\Aqua Control 1.0.3\Assets\AquaControl.ico
+C:\Users\Jeffersom\Desktop\Aqua Control 1.0.3\Aqua Control.dll
+C:\Users\Jeffersom\Desktop\Aqua Control 1.0.3\Aqua Control.deps.json
+C:\Users\Jeffersom\Desktop\Aqua Control 1.0.3\Aqua Control.runtimeconfig.json
+C:\Users\Jeffersom\Desktop\Aqua Control 1.0.3\Aqua Control.pdb
+C:\Users\Jeffersom\Desktop\Aqua Control 1.0.3\System.IO.Ports.dll
+C:\Users\Jeffersom\Desktop\Aqua Control 1.0.3\System.Management.dll
