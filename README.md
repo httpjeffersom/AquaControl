@@ -129,7 +129,7 @@ AquaControl/
 
 
 - o software oficial do watercooler não deve estar em execução ao mesmo tempo
-- Infelizmente o programa não tem verificação e é bloqueado pelo Windows defender na primeira execução, você deve permitir dentro do histórico de proteção do Windows defender 
+- Infelizmente o programa não tem verificação e é bloqueado pelo Windows defender na primeira execução, você deve permitir dentro do histórico de proteção do Windows defender, não há nada malicioso e tudo é local.
 
 
 ## Status do projeto
