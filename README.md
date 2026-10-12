@@ -5,7 +5,8 @@ Aqua Control é um aplicativo Windows para monitorar a temperatura da CPU e envi
 O projeto foi criado com foco em compatibilidade real com Windows 11, sem depender de driver kernel customizado, sem WinRing0 e sem instalação de serviço ou binário de baixo nível.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/eeed29b4-9daf-490b-bf00-96a22662d1d2" alt="Aqua Control" width="900" />
+  <img width="1113" height="591" alt="Aqua Control" src="https://github.com/user-attachments/assets/73fcdad7-a6cc-4f40-b2a2-07d0ba13af9b" />
+
 </p>
 
 ## Visão geral
