@@ -16,6 +16,8 @@ public sealed class CpuTemperatureReader : IDisposable
         AppLogger.Info("Leitor de temperatura aberto.");
     }
 
+    public int? CpuUsage { get; private set; }
+
     public int? ReadTemperature()
     {
         foreach (IHardware hardware in computer.Hardware)
@@ -23,6 +25,7 @@ public sealed class CpuTemperatureReader : IDisposable
             if (hardware.HardwareType != HardwareType.Cpu) continue;
 
             hardware.Update();
+            CpuUsage = ReadCpuUsage(hardware);
 
             ISensor? sensorPackage = hardware.Sensors.FirstOrDefault(s =>
                 s.SensorType == SensorType.Temperature && s.Name.Contains("Package"));
@@ -38,6 +41,25 @@ public sealed class CpuTemperatureReader : IDisposable
         }
 
         return null;
+    }
+
+    private static int? ReadCpuUsage(IHardware hardware)
+    {
+        ISensor[] loadSensors = hardware.Sensors
+            .Where(sensor => sensor.SensorType == SensorType.Load && sensor.Value is not null)
+            .ToArray();
+
+        ISensor? totalLoad = loadSensors.FirstOrDefault(sensor =>
+            sensor.Name.Contains("Total", StringComparison.OrdinalIgnoreCase));
+
+        if (totalLoad?.Value is float total)
+            return (int)Math.Round(Math.Clamp(total, 0, 100));
+
+        if (loadSensors.Length == 0)
+            return null;
+
+        double averageLoad = loadSensors.Average(sensor => sensor.Value!.Value);
+        return (int)Math.Round(Math.Clamp(averageLoad, 0, 100));
     }
 
     public void Dispose()

@@ -21,6 +21,7 @@ public sealed class WatercoolerMonitorService : IDisposable
 
     public event Action<int, byte[]>? TemperatureSent;
     public event Action<int>? TemperatureRead;
+    public event Action<int?>? CpuUsageRead;
     public event Action? TemperatureUnavailable;
     public event Action<Exception>? Error;
 
@@ -46,6 +47,7 @@ public sealed class WatercoolerMonitorService : IDisposable
                 if (elapsed.Elapsed >= nextReadAt)
                 {
                     int? temperature = temperatureReader.ReadTemperature();
+                    CpuUsageRead?.Invoke(temperatureReader.CpuUsage);
                     nextReadAt = elapsed.Elapsed + interval;
 
                     if (temperature is null)

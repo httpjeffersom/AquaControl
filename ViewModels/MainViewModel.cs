@@ -26,6 +26,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     private bool isMonitoring;
     private int? minimumTemperature;
     private int? maximumTemperature;
+    private int? cpuUsage;
     private double averageTemperature;
     private int temperatureSamples;
     private bool highTemperatureAlertShown;
@@ -93,6 +94,14 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     public string MinimumTemperatureText => minimumTemperature is null ? "--" : $"{minimumTemperature} °C";
     public string MaximumTemperatureText => maximumTemperature is null ? "--" : $"{maximumTemperature} °C";
     public string AverageTemperatureText => temperatureSamples == 0 ? "--" : $"{averageTemperature:0} °C";
+    public string CpuUsageText => cpuUsage is null ? "--%" : $"{cpuUsage}%";
+    public System.Windows.Media.Brush CpuUsageBrush => cpuUsage switch
+    {
+        null => DisconnectedBrush,
+        >= 90 => HighCpuUsageBrush,
+        >= 80 => ElevatedCpuUsageBrush,
+        _ => ConnectedBrush
+    };
 
     public double DisplayedTemperature
     {
@@ -139,6 +148,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
             var client = new Aqua240XSerialClient(portName, 9600);
             service = new WatercoolerMonitorService(reader, client, TimeSpan.FromMilliseconds(IntervalMs));
             service.TemperatureRead += OnTemperatureRead;
+            service.CpuUsageRead += OnCpuUsageRead;
             service.TemperatureSent += OnTemperatureSent;
             service.TemperatureUnavailable += OnTemperatureUnavailable;
             service.Error += OnServiceError;
@@ -218,6 +228,16 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
             OnPropertyChanged(nameof(MinimumTemperatureText));
             OnPropertyChanged(nameof(MaximumTemperatureText));
             OnPropertyChanged(nameof(AverageTemperatureText));
+        });
+    }
+
+    private void OnCpuUsageRead(int? usage)
+    {
+        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+        {
+            cpuUsage = usage;
+            OnPropertyChanged(nameof(CpuUsageText));
+            OnPropertyChanged(nameof(CpuUsageBrush));
         });
     }
 
@@ -319,6 +339,8 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
     private static readonly System.Windows.Media.Brush ConnectedBrush = CreateBrush(System.Windows.Media.Color.FromRgb(83, 235, 151));
     private static readonly System.Windows.Media.Brush DisconnectedBrush = CreateBrush(System.Windows.Media.Color.FromRgb(104, 116, 113));
+    private static readonly System.Windows.Media.Brush ElevatedCpuUsageBrush = CreateBrush(System.Windows.Media.Color.FromRgb(245, 137, 54));
+    private static readonly System.Windows.Media.Brush HighCpuUsageBrush = CreateBrush(System.Windows.Media.Color.FromRgb(255, 65, 75));
 
     private static System.Windows.Media.Brush CreateBrush(System.Windows.Media.Color color)
     {

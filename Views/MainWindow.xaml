@@ -89,6 +89,17 @@
                                        Foreground="{Binding IndicatorBrush}" />
 
                         </StackPanel>
+
+                        <TextBlock Text="USO DE CPU"
+                                   FontSize="9"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,4,0,0"
+                                   Foreground="#778582" />
+
+                        <TextBlock Text="{Binding CpuUsageText}"
+                                   FontSize="16"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{Binding CpuUsageBrush}" />
                     </StackPanel>
                 </Grid>
 
