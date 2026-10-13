@@ -5,7 +5,8 @@ Aqua Control é um aplicativo Windows para monitorar a temperatura da CPU e envi
 O projeto foi criado com foco em compatibilidade real com Windows 11, sem depender de driver kernel customizado, sem WinRing0 e sem instalação de serviço ou binário de baixo nível.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/eeed29b4-9daf-490b-bf00-96a22662d1d2" alt="Aqua Control" width="900" />
+  <img width="1113" height="591" alt="Aqua Control" src="https://github.com/user-attachments/assets/73fcdad7-a6cc-4f40-b2a2-07d0ba13af9b" />
+
 </p>
 
 ## Visão geral
@@ -93,29 +94,6 @@ dotnet publish -c Release -r win-x64 --self-contained false
 
 O executável será publicado em bin/Release/net10.0-windows/win-x64/publish/Aqua Control.exe.
 
-### Assinar o executável no Windows
-
-O script `Sign-AquaControl.ps1` cria um certificado autoassinado de assinatura de código chamado `MeuDevCertificado`, instala o certificado no repositório de Raiz Confiável do computador e assina o executável padrão em `C:\Program Files\Aqua Control\Aqua Control.exe`. Também procura `signtool.exe` no `PATH` e nos diretórios conhecidos do Windows SDK e verifica a assinatura ao terminar.
-
-1. Instale o Windows SDK se o `signtool.exe` ainda não estiver disponível.
-2. Abra o Windows PowerShell como Administrador.
-3. Execute:
-
-```powershell
-Set-ExecutionPolicy -Scope Process Bypass
-.\Sign-AquaControl.ps1
-```
-
-Para assinar um executável noutra localização, passe o caminho como argumento:
-
-```powershell
-.\Sign-AquaControl.ps1 -ExecutablePath 'C:\caminho\para\Aqua Control.exe'
-```
-
-O certificado autoassinado só será confiável no computador onde for instalado; não substitui um certificado emitido por uma autoridade certificadora para distribuição pública.
-
-
-O software oficial do watercooler deve permanecer fechado enquanto o Aqua Control usa a porta serial do dispositivo. A porta é detectada automaticamente pelo VID/PID do controlador CH340.
 
 ## Estrutura do projeto
 
@@ -150,6 +128,7 @@ AquaControl/
 
 
 - o software oficial do watercooler não deve estar em execução ao mesmo tempo
+- Infelizmente o programa não tem verificação e é bloqueado pelo Windows defender na primeira execução, você deve permitir dentro do histórico de proteção do Windows defender, não há nada malicioso e tudo é local.
 
 
 ## Status do projeto
