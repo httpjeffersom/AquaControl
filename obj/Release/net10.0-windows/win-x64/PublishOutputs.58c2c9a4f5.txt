@@ -1,0 +1,13 @@
+C:\Program Files\Aqua Control\Aqua Control.exe
+C:\Program Files\Aqua Control\Assets\AquaControl.ico
+C:\Program Files\Aqua Control\Aqua Control.dll
+C:\Program Files\Aqua Control\Aqua Control.deps.json
+C:\Program Files\Aqua Control\Aqua Control.runtimeconfig.json
+C:\Program Files\Aqua Control\Aqua Control.pdb
+C:\Program Files\Aqua Control\HidSharp.dll
+C:\Program Files\Aqua Control\LibreHardwareMonitorLib.dll
+C:\Program Files\Aqua Control\Mono.Posix.NETStandard.dll
+C:\Program Files\Aqua Control\System.IO.Ports.dll
+C:\Program Files\Aqua Control\System.Management.dll
+C:\Program Files\Aqua Control\MonoPosixHelper.dll
+C:\Program Files\Aqua Control\libMonoPosixHelper.dll

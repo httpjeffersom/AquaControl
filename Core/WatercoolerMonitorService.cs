@@ -7,7 +7,6 @@ public sealed class WatercoolerMonitorService : IDisposable
     private readonly CpuTemperatureReader temperatureReader;
     private readonly Aqua240XSerialClient serialClient;
     private readonly TimeSpan interval;
-    private readonly TemperatureRamp temperatureRamp = new();
 
     public WatercoolerMonitorService(
         CpuTemperatureReader temperatureReader,
@@ -64,10 +63,9 @@ public sealed class WatercoolerMonitorService : IDisposable
 
                 if (targetTemperature is int target)
                 {
-                    int temperatureToSend = temperatureRamp.AdvanceToward(target);
-                    byte[] pacote = Aqua240XProtocol.MontarPacote(temperatureToSend);
+                    byte[] pacote = Aqua240XProtocol.MontarPacote(target);
                     serialClient.Send(pacote);
-                    TemperatureSent?.Invoke(temperatureToSend, pacote);
+                    TemperatureSent?.Invoke(target, pacote);
                 }
 
                 await Task.Delay(TimeSpan.FromMilliseconds(500), cancellationToken);

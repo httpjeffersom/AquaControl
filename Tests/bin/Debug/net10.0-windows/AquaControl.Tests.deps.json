@@ -10,7 +10,7 @@
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "17.14.1",
           "xunit": "2.9.3",
-          "Aqua Control.Reference": "1.0.0.0"
+          "Aqua Control.Reference": "1.0.3.0"
         },
         "runtime": {
           "AquaControl.Tests.dll": {}
@@ -660,7 +660,7 @@
           }
         }
       },
-      "Aqua Control/1.0.0": {
+      "Aqua Control/1.0.3": {
         "dependencies": {
           "LibreHardwareMonitorLib": "0.9.4",
           "System.IO.Ports": "9.0.0",
@@ -672,11 +672,11 @@
           }
         }
       },
-      "Aqua Control.Reference/1.0.0.0": {
+      "Aqua Control.Reference/1.0.3.0": {
         "runtime": {
           "Aqua Control.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
+            "assemblyVersion": "1.0.3.0",
+            "fileVersion": "1.0.3.0"
           }
         }
       }
@@ -919,12 +919,12 @@
       "path": "xunit.extensibility.execution/2.9.3",
       "hashPath": "xunit.extensibility.execution.2.9.3.nupkg.sha512"
     },
-    "Aqua Control/1.0.0": {
+    "Aqua Control/1.0.3": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "Aqua Control.Reference/1.0.0.0": {
+    "Aqua Control.Reference/1.0.3.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

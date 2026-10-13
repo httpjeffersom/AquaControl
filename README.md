@@ -127,7 +127,6 @@ AquaControl/
 │   ├── Aqua240XSerialClient.cs
 │   ├── CpuTemperatureReader.cs
 │   ├── StartupManager.cs
-│   ├── TemperatureRamp.cs
 │   └── WatercoolerMonitorService.cs
 ├── Controls/
 │   └── TemperatureRing.cs

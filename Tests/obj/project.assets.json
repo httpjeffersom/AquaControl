@@ -1715,7 +1715,7 @@
           "build/net8.0/xunit.runner.visualstudio.props": {}
         }
       },
-      "Aqua Control/1.0.0": {
+      "Aqua Control/1.0.3": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
@@ -2908,7 +2908,7 @@
         "xunit.runner.visualstudio.nuspec"
       ]
     },
-    "Aqua Control/1.0.0": {
+    "Aqua Control/1.0.3": {
       "type": "project",
       "path": "../WatercoolerTemp.csproj",
       "msbuildProject": "../WatercoolerTemp.csproj"
@@ -2916,7 +2916,7 @@
   },
   "projectFileDependencyGroups": {
     "net10.0-windows": [
-      "Aqua Control >= 1.0.0",
+      "Aqua Control >= 1.0.3",
       "Microsoft.NET.Test.Sdk >= 17.14.1",
       "xunit >= 2.9.3",
       "xunit.runner.visualstudio >= 3.1.4"
@@ -3277,13 +3277,5 @@
         }
       }
     }
-  },
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problema ao ler o arquivo de cache D:\\Programação\\AquaControl\\Tests\\obj\\project.nuget.cache: '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0."
-    }
-  ]
+  }
 }
