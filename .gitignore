@@ -1,0 +1,12 @@
+# Artefatos de build
+bin/
+obj/
+state/
+
+# Arquivos locais do Visual Studio
+*.user
+*.suo
+.vs/
+
+# Logs temporários do sistema
+*.log
