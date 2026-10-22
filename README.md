@@ -2,7 +2,7 @@
 
 Aqua Control é um aplicativo Windows para monitorar a temperatura da CPU e enviar esse valor para o display do watercooler Pichau Aqua 240X e suas variantes.
 
-O projeto foi criado com foco em compatibilidade real com Windows 11, sem depender de driver kernel customizado, sem WinRing0 e sem instalação de serviço ou binário de baixo nível.
+O projeto foi criado com foco em compatibilidade real com Windows 11, sem driver kernel próprio e sem instalação de serviço.
 
 <p align="center">
   <img width="1113" height="591" alt="Aqua Control" src="https://github.com/user-attachments/assets/73fcdad7-a6cc-4f40-b2a2-07d0ba13af9b" />
@@ -53,15 +53,22 @@ O projeto foi validado para os modelos:
 
 ## Segurança e Defender
 
-Este projeto foi desenvolvido para evitar uso de driver kernel vulnerável e não depende de WinRing0, WinRing0x64, WinRing0x86 ou qualquer driver similar.
+O AquaControl não instala nem carrega driver próprio. O aplicativo conversa com o cooler pela porta serial do Windows e não altera o registro além do necessário.
 
-A abordagem atual usa:
+Para ler a temperatura da CPU, o projeto usa a biblioteca `LibreHardwareMonitorLib`, a mesma engine open source do projeto [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor). Para acessar sensores que o Windows não expõe (como a temperatura "Package" de CPUs Intel, lida via MSR), essa biblioteca carrega em modo kernel o driver **WinRing0**, que vem embutido nela — não é empacotado nem instalado à parte pelo AquaControl. Essa é a abordagem padrão de ferramentas conhecidas de monitoramento (LibreHardwareMonitor, FanControl e similares).
 
-- `LibreHardwareMonitorLib` para leitura de hardware em modo usuário
-- `System.IO.Ports` para acesso serial em modo usuário
-- APIs do Windows e serviços do sistema, sem driver personalizado
+O WinRing0 é um driver genérico de acesso ao hardware com vulnerabilidades já documentadas publicamente, e é muito usado por malware real — por isso os antivírus aplicam heurística agressiva a qualquer aplicativo que o carregue. É exatamente isso que dispara o alerta do Windows Defender na primeira execução, e não qualquer comportamento malicioso do AquaControl.
 
-Isso evita os riscos associados a drivers de baixo nível e mantém o projeto compatível com Windows 11 e com as políticas de segurança do Microsoft Defender.
+Na prática:
+
+- nenhum dado sai do computador: o programa não faz acesso à rede
+- a biblioteca de sensores é usada apenas para leitura de sensores de hardware
+- o executável não é empacotado, ofuscado nem faz download de nada
+- o alerta do Defender é um falso-positivo de heurística conhecido nesta categoria de software
+
+Código-fonte 100% aberto e auditável neste repositório: cada linha do que o programa faz está aqui.
+
+Se o Defender bloquear a primeira execução, autorize dentro do histórico de proteção do Windows Defender. Se preferir conferir por conta própria, envie o executável ao [VirusTotal](https://www.virustotal.com) e observe os fabricantes que acusarem detecção: falsos positivos por heurística são comuns em ferramentas de monitoramento de hardware e os fornecedores costumam remover a deteção após a análise.
 
 ## Instalação e execução
 
