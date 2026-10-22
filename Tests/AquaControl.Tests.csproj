@@ -12,6 +12,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WatercoolerTemp.csproj" />
+    <ProjectReference Include="..\AquaControl.csproj" />
   </ItemGroup>
 </Project>

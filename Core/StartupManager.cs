@@ -11,10 +11,28 @@ public static class StartupManager
     private const string TaskName = "AquaControl";
     private const string StartupArgument = "--startup";
 
-    public static bool IsEnabled => RunSchtasks("/Query", "/TN", TaskName).ExitCode == 0;
+    // Consultar o Agendador de Tarefas custa um processo novo; cache curto
+    // evita executar schtasks.exe toda vez que o binding da UI lê o estado.
+    private static readonly TimeSpan EnabledCacheLifetime = TimeSpan.FromSeconds(2);
+    private static (bool Enabled, DateTime CachedAtUtc)? enabledCache;
+
+    public static bool IsEnabled
+    {
+        get
+        {
+            (bool Enabled, DateTime CachedAtUtc)? cached = enabledCache;
+            if (cached.HasValue && DateTime.UtcNow - cached.Value.CachedAtUtc <= EnabledCacheLifetime)
+                return cached.Value.Enabled;
+
+            bool enabled = RunSchtasks("/Query", "/TN", TaskName).ExitCode == 0;
+            enabledCache = (enabled, DateTime.UtcNow);
+            return enabled;
+        }
+    }
 
     public static void SetEnabled(bool enabled)
     {
+        enabledCache = null;
         if (!enabled)
         {
             if (IsEnabled)

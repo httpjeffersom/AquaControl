@@ -5,10 +5,10 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <AssemblyName>Aqua Control</AssemblyName>
+    <AssemblyName>AquaControl</AssemblyName>
     <AssemblyTitle>Aqua Control</AssemblyTitle>
     <Product>Aqua Control</Product>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>

@@ -81,7 +81,7 @@ cd Aqua-Control
 ### Executar em modo de desenvolvimento
 
 ```bash
-dotnet build
+dotnet build AquaControl.sln
 ```
 
 Em seguida, execute o aplicativo gerado ou abra a solução no Visual Studio.
@@ -92,17 +92,26 @@ Em seguida, execute o aplicativo gerado ou abra a solução no Visual Studio.
 dotnet publish -c Release -r win-x64 --self-contained false
 ```
 
-O executável será publicado em bin/Release/net10.0-windows/win-x64/publish/Aqua Control.exe.
+O executável será publicado em bin/Release/net10.0-windows/win-x64/publish/AquaControl.exe.
+
+### Testes
+
+```bash
+dotnet test AquaControl.sln
+```
 
 
 ## Estrutura do projeto
 
 ```text
 AquaControl/
+├── AquaControl.sln
+├── AquaControl.csproj
 ├── Core/
 │   ├── Aqua240XPortDiscovery.cs
 │   ├── Aqua240XProtocol.cs
 │   ├── Aqua240XSerialClient.cs
+│   ├── AppLogger.cs
 │   ├── CpuTemperatureReader.cs
 │   ├── StartupManager.cs
 │   └── WatercoolerMonitorService.cs
@@ -113,10 +122,12 @@ AquaControl/
 │   └── MainWindow.xaml.cs
 ├── ViewModels/
 │   └── MainViewModel.cs
+├── Tests/
+│   ├── AquaControl.Tests.csproj
+│   └── Aqua240XProtocolTests.cs
 ├── App.xaml
 ├── App.xaml.cs
 ├── Program.cs
-├── WatercoolerTemp.csproj
 ├── app.manifest
 ├── Sign-AquaControl.ps1
 ├── LICENSE

@@ -31,6 +31,16 @@ public sealed class TemperatureRing : FrameworkElement
         set => SetValue(IndicatorBrushProperty, value);
     }
 
+    // Brush de LED inativo congelado, em vez de alocar 72 objetos a cada render.
+    private static readonly System.Windows.Media.Brush InactiveDotBrush = CreateInactiveDotBrush();
+
+    private static System.Windows.Media.Brush CreateInactiveDotBrush()
+    {
+        var brush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(38, 210, 220, 220));
+        brush.Freeze();
+        return brush;
+    }
+
     protected override void OnRender(DrawingContext drawingContext)
     {
         base.OnRender(drawingContext);
@@ -48,7 +58,7 @@ public sealed class TemperatureRing : FrameworkElement
             double x = centerX + Math.Cos(angle) * radius;
             double y = centerY + Math.Sin(angle) * radius;
             bool isActive = index < activeDots;
-            System.Windows.Media.Brush brush = isActive ? IndicatorBrush : new SolidColorBrush(System.Windows.Media.Color.FromArgb(38, 210, 220, 220));
+            System.Windows.Media.Brush brush = isActive ? IndicatorBrush : InactiveDotBrush;
             double currentRadius = isActive ? dotRadius : 1.6;
 
             drawingContext.DrawEllipse(brush, null, new System.Windows.Point(x, y), currentRadius, currentRadius);

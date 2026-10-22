@@ -2,7 +2,7 @@
 
 [CmdletBinding()]
 param(
-    [string]$ExecutablePath = 'C:\Program Files\Aqua Control\Aqua Control.exe'
+    [string]$ExecutablePath = 'C:\Program Files\AquaControl\AquaControl.exe'
 )
 
 Set-StrictMode -Version Latest

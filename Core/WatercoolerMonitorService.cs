@@ -38,6 +38,7 @@ public sealed class WatercoolerMonitorService : IDisposable
             var elapsed = Stopwatch.StartNew();
             TimeSpan nextReadAt = TimeSpan.Zero;
             int? targetTemperature = null;
+            int? lastSentTemperature = null;
 
             while (true)
             {
@@ -52,6 +53,7 @@ public sealed class WatercoolerMonitorService : IDisposable
                     if (temperature is null)
                     {
                         targetTemperature = null;
+                        lastSentTemperature = null;
                         TemperatureUnavailable?.Invoke();
                     }
                     else
@@ -63,9 +65,15 @@ public sealed class WatercoolerMonitorService : IDisposable
 
                 if (targetTemperature is int target)
                 {
-                    byte[] pacote = Aqua240XProtocol.MontarPacote(target);
-                    serialClient.Send(pacote);
-                    TemperatureSent?.Invoke(target, pacote);
+                    // Envia apenas quando a temperatura muda (ou religa o sensor),
+                    // evitando pacotes redundantes na serial.
+                    if (target != lastSentTemperature)
+                    {
+                        byte[] pacote = Aqua240XProtocol.MontarPacote(target);
+                        serialClient.Send(pacote);
+                        lastSentTemperature = target;
+                        TemperatureSent?.Invoke(target, pacote);
+                    }
                 }
 
                 await Task.Delay(TimeSpan.FromMilliseconds(500), cancellationToken);

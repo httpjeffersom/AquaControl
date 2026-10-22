@@ -18,6 +18,8 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     private WatercoolerMonitorService? service;
     private CancellationTokenSource? monitorCancellation;
     private Task? monitorTask;
+    private bool isConnecting;
+    private bool isDisposing;
     private string status = "DESCONECTADO";
     private string message = "PRONTO";
     private double targetTemperature;
@@ -42,11 +44,11 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         reconnectTimer.Tick += (_, _) =>
         {
             if (!IsConnected)
-                Connect();
+                AttemptConnect();
         };
 
         reconnectTimer.Start();
-        Connect();
+        AttemptConnect();
     }
 
     public bool IsStartupEnabled
@@ -136,39 +138,58 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<int>? HighTemperatureAlert;
 
-    private void Connect()
+    private async void AttemptConnect()
     {
-        if (IsConnected)
+        if (IsConnected || isConnecting || isDisposing)
             return;
 
+        isConnecting = true;
+        WatercoolerMonitorService? candidate = null;
         try
         {
-            string portName = Aqua240XPortDiscovery.FindPort();
-            var reader = new CpuTemperatureReader();
-            var client = new Aqua240XSerialClient(portName, 9600);
-            service = new WatercoolerMonitorService(reader, client, TimeSpan.FromMilliseconds(IntervalMs));
-            service.TemperatureRead += OnTemperatureRead;
-            service.CpuUsageRead += OnCpuUsageRead;
-            service.TemperatureSent += OnTemperatureSent;
-            service.TemperatureUnavailable += OnTemperatureUnavailable;
-            service.Error += OnServiceError;
-            service.Open();
-            IsConnected = true;
-            Status = "CONECTADO";
-            StartMonitoring();
-            Message = "MONITORAMENTO ATIVO";
-            ResetStatistics();
-            AppLogger.Info($"Conectado em {portName}.");
+            // WMI, SerialPort.Open e LibreHardwareMonitor podem levar segundos;
+            // roda em segundo plano para não congelar a UI durante reconexões.
+            candidate = await Task.Run(() =>
+            {
+                string portName = Aqua240XPortDiscovery.FindPort();
+                AppLogger.Info($"Porta {portName} localizada.");
+                var reader = new CpuTemperatureReader();
+                var client = new Aqua240XSerialClient(portName, 9600);
+                var monitor = new WatercoolerMonitorService(reader, client, TimeSpan.FromMilliseconds(IntervalMs));
+                monitor.Open();
+                return monitor;
+            });
         }
         catch (Exception exception)
         {
-            service?.Dispose();
-            service = null;
+            candidate?.Dispose();
             Status = "DESCONECTADO";
             IsConnected = false;
             Message = "AGUARDANDO WATERCOOLER";
             AppLogger.Error("Falha ao localizar ou conectar ao watercooler", exception);
+            isConnecting = false;
+            return;
         }
+
+        if (isDisposing)
+        {
+            candidate.Dispose();
+            isConnecting = false;
+            return;
+        }
+
+        service = candidate;
+        service.TemperatureRead += OnTemperatureRead;
+        service.CpuUsageRead += OnCpuUsageRead;
+        service.TemperatureSent += OnTemperatureSent;
+        service.TemperatureUnavailable += OnTemperatureUnavailable;
+        service.Error += OnServiceError;
+        IsConnected = true;
+        Status = "CONECTADO";
+        Message = "MONITORAMENTO ATIVO";
+        ResetStatistics();
+        StartMonitoring();
+        isConnecting = false;
     }
 
     public void StartMonitoring()
@@ -181,7 +202,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         IsMonitoring = true;
     }
 
-    public async Task StopMonitoringAsync()
+    public async Task StopMonitoringAsync(bool reportErrors = true)
     {
         CancellationTokenSource? cancellation = monitorCancellation;
         if (cancellation is null)
@@ -200,7 +221,8 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         }
         catch (Exception exception)
         {
-            Message = exception.Message;
+            if (reportErrors)
+                Message = exception.Message;
         }
         finally
         {
@@ -269,15 +291,17 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
     private void OnServiceError(Exception exception)
     {
-        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+        AppLogger.Error("Monitoramento desconectado", exception);
+        System.Windows.Application.Current?.Dispatcher.InvokeAsync(async () =>
         {
             IsConnected = false;
-            IsMonitoring = false;
             Status = "ERRO DE CONEXÃO";
             Message = "TENTANDO RECONECTAR";
+            // Aguarda o loop encerrar antes de liberar os recursos,
+            // evitando Dispose durante serialClient.Send.
+            await StopMonitoringAsync(reportErrors: false);
             service?.Dispose();
             service = null;
-            AppLogger.Error("Monitoramento desconectado", exception);
         });
     }
 
@@ -317,13 +341,15 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        isDisposing = true;
+        reconnectTimer.Stop();
+
         if (monitorCancellation is not null)
-            await StopMonitoringAsync();
+            await StopMonitoringAsync(reportErrors: false);
 
         service?.Dispose();
         service = null;
         displayTimer.Stop();
-        reconnectTimer.Stop();
     }
 
     private void ResetStatistics()
