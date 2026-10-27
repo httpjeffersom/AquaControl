@@ -103,34 +103,20 @@
                     </StackPanel>
                 </Grid>
 
-                <StackPanel HorizontalAlignment="Center"
-                            Margin="0,6,0,0">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,8,0,0">
 
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center">
-
-                        <Ellipse Width="7"
-                                 Height="7"
-                                 Fill="{Binding StatusBrush}"
-                                 VerticalAlignment="Center" />
-
-                        <TextBlock Text="DISPOSITIVO"
-                                   FontSize="10"
-                                   Margin="7,0,0,0"
-                                   Foreground="#9AA8A5" />
-
-                    </StackPanel>
+                    <TextBlock Text="DISPOSITIVO"
+                               FontSize="10"
+                               VerticalAlignment="Center"
+                               Foreground="#9AA8A5" />
 
                     <TextBlock Text="{Binding Status}"
                                FontSize="11"
-                               HorizontalAlignment="Center"
-                               Margin="0,2,0,0" />
-
-                    <TextBlock Text="{Binding DeviceSummary}"
-                               FontSize="9"
-                               HorizontalAlignment="Center"
-                               Margin="0,1,0,0"
-                               Foreground="#778582" />
+                               Margin="7,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="{Binding StatusBrush}" />
 
                 </StackPanel>
 
