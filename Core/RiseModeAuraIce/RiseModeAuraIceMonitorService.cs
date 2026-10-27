@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace WatercoolerTemp.Core.RiseModeAuraIce;
 
 /// <summary>
@@ -31,6 +33,9 @@ public sealed class RiseModeAuraIceMonitorService : IDisposable
     public event Action? TemperatureUnavailable;
     public event Action<Exception>? Error;
 
+    // Falhas transitórias de HID não derrubam a sessão na primeira ocorrência.
+    private const int MaxConsecutiveSendFailures = 5;
+
     public void Open()
     {
         temperatureReader.Open();
@@ -42,6 +47,9 @@ public sealed class RiseModeAuraIceMonitorService : IDisposable
     {
         try
         {
+            int? lastKnownTemperature = null;
+            int consecutiveSendFailures = 0;
+
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -49,26 +57,42 @@ public sealed class RiseModeAuraIceMonitorService : IDisposable
                 int? temperature = temperatureReader.ReadTemperature();
                 CpuUsageRead?.Invoke(temperatureReader.CpuUsage);
 
-                if (temperature is null)
+                // Leitura pontualmente indisponível: mantém o último valor
+                // válido para o display não ficar sem informação.
+                if (temperature is int value)
                 {
-                    TemperatureUnavailable?.Invoke();
+                    int clamped = Math.Clamp(value, 0, 255);
+                    TemperatureRead?.Invoke(clamped);
+                    lastKnownTemperature = clamped;
                 }
                 else
                 {
-                    int target = Math.Clamp(temperature.Value, 0, 255);
-                    TemperatureRead?.Invoke(target);
+                    TemperatureUnavailable?.Invoke();
+                }
 
-                    byte[] report = RiseModeAuraIceProtocol.BuildHidReport(target);
-                    for (int attempt = 0; attempt < RiseModeAuraIceProtocol.BurstCount; attempt++)
+                if (lastKnownTemperature is int target)
+                {
+                    try
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        client.Send(report);
-
-                        if (attempt < RiseModeAuraIceProtocol.BurstCount - 1)
-                            await Task.Delay(RiseModeAuraIceProtocol.BurstDelayMs, cancellationToken);
+                        await SendBurstAsync(target, cancellationToken).ConfigureAwait(false);
+                        TemperatureSent?.Invoke(target, RiseModeAuraIceProtocol.BuildHidReport(target));
+                        consecutiveSendFailures = 0;
                     }
-
-                    TemperatureSent?.Invoke(target, report);
+                    catch (OperationCanceledException)
+                    {
+                        throw;
+                    }
+                    catch (Exception exception)
+                        when (exception is IOException or TimeoutException
+                            or InvalidOperationException or UnauthorizedAccessException)
+                    {
+                        // Tenta de novo nos próximos ciclos; só vira erro
+                        // fatal depois de todas as tentativas falharem.
+                        consecutiveSendFailures++;
+                        AppLogger.Error("Falha ao enviar relatório ao display", exception);
+                        if (consecutiveSendFailures >= MaxConsecutiveSendFailures)
+                            throw;
+                    }
                 }
 
                 await Task.Delay(interval, cancellationToken);
@@ -82,6 +106,19 @@ public sealed class RiseModeAuraIceMonitorService : IDisposable
             AppLogger.Error("Erro no monitoramento Rise Mode Aura Ice", exception);
             Error?.Invoke(exception);
             throw;
+        }
+    }
+
+    private async Task SendBurstAsync(int target, CancellationToken cancellationToken)
+    {
+        byte[] report = RiseModeAuraIceProtocol.BuildHidReport(target);
+        for (int attempt = 0; attempt < RiseModeAuraIceProtocol.BurstCount; attempt++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            client.Send(report);
+
+            if (attempt < RiseModeAuraIceProtocol.BurstCount - 1)
+                await Task.Delay(RiseModeAuraIceProtocol.BurstDelayMs, cancellationToken);
         }
     }
 

@@ -1,5 +1,7 @@
 using System.Diagnostics;
 
+using System.IO;
+
 namespace WatercoolerTemp.Core;
 
 public sealed class WatercoolerMonitorService : IDisposable
@@ -40,6 +42,14 @@ public sealed class WatercoolerMonitorService : IDisposable
     public event Action? TemperatureUnavailable;
     public event Action<Exception>? Error;
 
+    // Reenvio mesmo sem mudança de temperatura, para o display não entrar
+    // em timeout e apagar quando a temperatura fica estável por seguidos ciclos.
+    private static readonly TimeSpan SendHeartbeat = TimeSpan.FromSeconds(2);
+
+    // Falhas transitórias de serial (ex.: reinstanciação do driver CH340) não
+    // desmontam tudo: só depois de N tentativas seguidas o erro é fatal.
+    private const int MaxConsecutiveSendFailures = 5;
+
     public void Open()
     {
         temperatureReader.Open();
@@ -53,8 +63,10 @@ public sealed class WatercoolerMonitorService : IDisposable
         {
             var elapsed = Stopwatch.StartNew();
             TimeSpan nextReadAt = TimeSpan.Zero;
-            int? targetTemperature = null;
+            int? lastKnownTemperature = null;
             int? lastSentTemperature = null;
+            TimeSpan? lastSentAt = null;
+            int consecutiveSendFailures = 0;
 
             while (true)
             {
@@ -68,27 +80,47 @@ public sealed class WatercoolerMonitorService : IDisposable
 
                     if (temperature is null)
                     {
-                        targetTemperature = null;
-                        lastSentTemperature = null;
+                        // Leitura pontualmente indisponível: mantém o último
+                        // valor válido para o display não ficar sem informação.
                         TemperatureUnavailable?.Invoke();
                     }
                     else
                     {
-                        targetTemperature = temperature.Value;
                         TemperatureRead?.Invoke(temperature.Value);
+                        lastKnownTemperature = temperature.Value;
                     }
                 }
 
-                if (targetTemperature is int target)
+                if (lastKnownTemperature is int target)
                 {
-                    // Envia apenas quando a temperatura muda (ou religa o sensor),
-                    // evitando pacotes redundantes na serial.
-                    if (target != lastSentTemperature)
+                    bool temperatureChanged = target != lastSentTemperature;
+                    bool heartbeatDue = lastSentAt is TimeSpan sentAt
+                        && elapsed.Elapsed - sentAt >= SendHeartbeat;
+
+                    if (temperatureChanged || heartbeatDue)
                     {
                         byte[] pacote = Aqua240XProtocol.MontarPacote(target);
-                        serialClient.Send(pacote);
-                        lastSentTemperature = target;
-                        TemperatureSent?.Invoke(target, pacote);
+                        try
+                        {
+                            serialClient.Send(pacote);
+                            consecutiveSendFailures = 0;
+                            lastSentTemperature = target;
+                            lastSentAt = elapsed.Elapsed;
+                            TemperatureSent?.Invoke(target, pacote);
+                        }
+                        catch (Exception exception)
+                            when (exception is IOException or TimeoutException
+                                or InvalidOperationException or UnauthorizedAccessException)
+                        {
+                            // Tenta de novo nos próximos ciclos; só vira erro
+                            // fatal depois de todas as tentativas falharem.
+                            consecutiveSendFailures++;
+                            lastSentTemperature = null;
+                            lastSentAt = null;
+                            AppLogger.Error("Falha ao enviar pacote ao cooler", exception);
+                            if (consecutiveSendFailures >= MaxConsecutiveSendFailures)
+                                throw;
+                        }
                     }
                 }
 

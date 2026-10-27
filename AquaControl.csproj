@@ -8,7 +8,7 @@
     <AssemblyName>AquaControl</AssemblyName>
     <AssemblyTitle>Aqua Control</AssemblyTitle>
     <Product>Aqua Control</Product>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
