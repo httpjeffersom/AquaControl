@@ -9,38 +9,56 @@ public sealed class CpuTemperatureReader : IDisposable
     {
         IsCpuEnabled = true
     };
+    private readonly object syncRoot = new();
+    private int? cpuUsage;
 
     public void Open()
     {
-        computer.Open();
+        lock (syncRoot)
+        {
+            computer.Open();
+        }
+
         AppLogger.Info("Leitor de temperatura aberto.");
     }
 
-    public int? CpuUsage { get; private set; }
+    public int? CpuUsage
+    {
+        get
+        {
+            lock (syncRoot)
+                return cpuUsage;
+        }
+    }
 
     public int? ReadTemperature()
     {
-        foreach (IHardware hardware in computer.Hardware)
+        // O mesmo leitor é compartilhado entre os drivers quando os dois
+        // water coolers estão conectados; a leitura precisa ser serializada.
+        lock (syncRoot)
         {
-            if (hardware.HardwareType != HardwareType.Cpu) continue;
+            foreach (IHardware hardware in computer.Hardware)
+            {
+                if (hardware.HardwareType != HardwareType.Cpu) continue;
 
-            hardware.Update();
-            CpuUsage = ReadCpuUsage(hardware);
+                hardware.Update();
+                cpuUsage = ReadCpuUsage(hardware);
 
-            ISensor? sensorPackage = hardware.Sensors.FirstOrDefault(s =>
-                s.SensorType == SensorType.Temperature && s.Name.Contains("Package"));
+                ISensor? sensorPackage = hardware.Sensors.FirstOrDefault(s =>
+                    s.SensorType == SensorType.Temperature && s.Name.Contains("Package"));
 
-            if (sensorPackage?.Value is not null)
-                return (int)Math.Round(sensorPackage.Value.Value);
+                if (sensorPackage?.Value is not null)
+                    return (int)Math.Round(sensorPackage.Value.Value);
 
-            ISensor? qualquerSensor = hardware.Sensors.FirstOrDefault(s =>
-                s.SensorType == SensorType.Temperature && s.Value is not null);
+                ISensor? qualquerSensor = hardware.Sensors.FirstOrDefault(s =>
+                    s.SensorType == SensorType.Temperature && s.Value is not null);
 
-            if (qualquerSensor?.Value is not null)
-                return (int)Math.Round(qualquerSensor.Value.Value);
+                if (qualquerSensor?.Value is not null)
+                    return (int)Math.Round(qualquerSensor.Value.Value);
+            }
+
+            return null;
         }
-
-        return null;
     }
 
     private static int? ReadCpuUsage(IHardware hardware)
@@ -64,7 +82,11 @@ public sealed class CpuTemperatureReader : IDisposable
 
     public void Dispose()
     {
-        computer.Close();
+        lock (syncRoot)
+        {
+            computer.Close();
+        }
+
         AppLogger.Info("Leitor de temperatura fechado.");
     }
 }

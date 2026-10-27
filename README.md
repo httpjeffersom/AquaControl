@@ -1,6 +1,6 @@
 # Aqua Control
 
-Aqua Control é um aplicativo Windows para monitorar a temperatura da CPU e enviar esse valor para o display do watercooler Pichau Aqua 240X e suas variantes.
+Aqua Control é um aplicativo Windows para monitorar a temperatura da CPU e enviar esse valor para o display do watercooler Pichau Aqua 240X e suas variantes, além do Rise Mode Aura Ice ARGB.
 
 O projeto foi criado com foco em compatibilidade real com Windows 11, sem driver kernel próprio e sem instalação de serviço.
 
@@ -31,7 +31,8 @@ A lógica de leitura usa monitoramento de hardware em modo usuário e a comunica
 
 - Windows 10/11
 - conector USB do cooler conectado
-- driver CH340 instalado pelo sistema operacional
+- Pichau Aqua: driver CH340 instalado pelo sistema operacional
+- Rise Mode Aura Ice: nada extra, o Windows já expõe o dispositivo como HID (sem Zadig/WinUSB)
 - execução como administrador (somente para tarefas de inicialização e acesso ao ambiente do Windows)
 
 ## Hardware suportado
@@ -41,15 +42,26 @@ O projeto foi validado para os modelos:
 - Pichau Aqua 120X 
 - Pichau Aqua 240X
 - Pichau Aqua 360X
+- Rise Mode Aura Ice ARGB 240 mm branco (`RM-WAI-02-ARGB`)
 
+O protocolo do Rise Mode foi confirmado por engenharia reversa e por uma
+implementação Windows independente. O projeto de referência Linux foi testado
+em um Aura Ice Black 360 mm; o modelo branco de 240 mm usa o mesmo controlador
+HID (VID `0xAA88` / PID `0x8666`) e o mesmo payload, mas a confirmação final
+depende de teste com o hardware físico.
 
 ## Como funciona
 
-1. O programa localiza a porta serial do watercooler pelo VID/PID do CH340.
-2. Abre a conexão serial em modo usuário.
+1. O programa procura os dois tipos de water cooler: porta serial CH340 do
+   Pichau e HID nativo do Rise Mode.
+2. Para o Pichau, abre a porta serial em modo usuário. Para o Rise Mode, abre o
+   dispositivo HID pelo caminho do Windows.
 3. Lê a temperatura da CPU usando a biblioteca de sensores.
-4. Monta o pacote de atualização do display.
-5. Envia o valor para o cooler.
+4. Monta o pacote de atualização no protocolo de cada modelo.
+5. Envia o valor para o cooler. Os dois podem funcionar ao mesmo tempo.
+
+O protocolo detalhado do Rise Mode está em
+[`Core/RiseModeAuraIce/PROTOCOL.md`](Core/RiseModeAuraIce/PROTOCOL.md).
 
 ## Segurança e Defender
 
@@ -121,7 +133,19 @@ AquaControl/
 │   ├── AppLogger.cs
 │   ├── CpuTemperatureReader.cs
 │   ├── StartupManager.cs
-│   └── WatercoolerMonitorService.cs
+│   ├── WatercoolerDeviceManager.cs
+│   ├── WatercoolerMonitorService.cs
+│   ├── Devices/
+│   │   ├── IWatercoolerDeviceSession.cs
+│   │   ├── PichauAqua240XSession.cs
+│   │   └── RiseModeAuraIceSession.cs
+│   └── RiseModeAuraIce/
+│       ├── PROTOCOL.md
+│       ├── RiseModeAuraIceClient.cs
+│       ├── RiseModeAuraIceDeviceDiscovery.cs
+│       ├── RiseModeAuraIceDeviceInfo.cs
+│       ├── RiseModeAuraIceMonitorService.cs
+│       └── RiseModeAuraIceProtocol.cs
 ├── Controls/
 │   └── TemperatureRing.cs
 ├── Views/
@@ -131,7 +155,10 @@ AquaControl/
 │   └── MainViewModel.cs
 ├── Tests/
 │   ├── AquaControl.Tests.csproj
-│   └── Aqua240XProtocolTests.cs
+│   ├── Aqua240XProtocolTests.cs
+│   └── RiseModeAuraIce/
+│       ├── RiseModeAuraIceProtocolTests.cs
+│       └── RiseModeAuraIceDetectionTests.cs
 ├── App.xaml
 ├── App.xaml.cs
 ├── Program.cs
@@ -145,7 +172,9 @@ AquaControl/
 ## Limitações conhecidas
 
 
-- o software oficial do watercooler não deve estar em execução ao mesmo tempo
+- o software oficial do watercooler (Rise Mode ou Pichau) não deve estar em execução ao mesmo tempo
+- o Rise Mode não expõe nome comercial legível: quem explicar os identificadores `0xAA88/0x8666` sem relatório de saída compatível é ignorado; outros water coolers com o mesmo controlador (por exemplo, revendas como Mancer) podem ser aceitos pelo mesmo protocolo
+- se o usuário usou script Python/libusb anteriormente e o display recebeu driver WinUSB via Zadig, o Aqua Control não encontra o sistema; desinstale o driver no Gerenciador de Dispositivos e verifique as alterações de hardware para o Windows recriar o HID padrão
 - Infelizmente o programa não tem verificação e é bloqueado pelo Windows defender na primeira execução, você deve permitir dentro do histórico de proteção do Windows defender, não há nada malicioso e tudo é local.
 
 
@@ -158,6 +187,7 @@ AquaControl/
 - [x] Alertas de temperatura alta
 - [x] Inicialização com o Windows
 - [x] Sem driver personalizado de kernel
+- [x] Suporte ao Rise Mode Aura Ice via HID nativo (driver independente)
 
 ## Licença
 

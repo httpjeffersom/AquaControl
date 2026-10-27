@@ -7,15 +7,31 @@ public sealed class WatercoolerMonitorService : IDisposable
     private readonly CpuTemperatureReader temperatureReader;
     private readonly Aqua240XSerialClient serialClient;
     private readonly TimeSpan interval;
+    private readonly bool ownsTemperatureReader;
 
     public WatercoolerMonitorService(
         CpuTemperatureReader temperatureReader,
         Aqua240XSerialClient serialClient,
         TimeSpan interval)
+        : this(temperatureReader, serialClient, interval, ownsTemperatureReader: true)
+    {
+    }
+
+    /// <summary>
+    /// Permite compartilhar um único leitor de CPU entre os drivers quando
+    /// mais de um water cooler está conectado. O construtor acima mantém o
+    /// comportamento original (o serviço é dono e fecha o leitor).
+    /// </summary>
+    public WatercoolerMonitorService(
+        CpuTemperatureReader temperatureReader,
+        Aqua240XSerialClient serialClient,
+        TimeSpan interval,
+        bool ownsTemperatureReader)
     {
         this.temperatureReader = temperatureReader;
         this.serialClient = serialClient;
         this.interval = interval;
+        this.ownsTemperatureReader = ownsTemperatureReader;
     }
 
     public event Action<int, byte[]>? TemperatureSent;
@@ -93,6 +109,7 @@ public sealed class WatercoolerMonitorService : IDisposable
     public void Dispose()
     {
         serialClient.Dispose();
-        temperatureReader.Dispose();
+        if (ownsTemperatureReader)
+            temperatureReader.Dispose();
     }
 }

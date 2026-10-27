@@ -126,6 +126,12 @@
                                HorizontalAlignment="Center"
                                Margin="0,2,0,0" />
 
+                    <TextBlock Text="{Binding DeviceSummary}"
+                               FontSize="9"
+                               HorizontalAlignment="Center"
+                               Margin="0,1,0,0"
+                               Foreground="#778582" />
+
                 </StackPanel>
 
                 <UniformGrid Rows="1"

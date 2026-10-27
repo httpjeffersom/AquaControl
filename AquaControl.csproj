@@ -33,6 +33,7 @@
   <ItemGroup>
     <!-- Biblioteca de sensores de hardware (mesma engine do LibreHardwareMonitor,
          mas usada aqui como referência .NET nativa, sem precisar de programa externo) -->
+    <PackageReference Include="HidSharp" Version="2.1.0" />
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4" />
 
     <!-- Porta serial (equivalente ao pyserial) -->

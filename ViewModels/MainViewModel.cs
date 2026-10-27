@@ -15,13 +15,13 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     private const int AlertResetThreshold = 80;
     private readonly DispatcherTimer displayTimer;
     private readonly DispatcherTimer reconnectTimer;
-    private WatercoolerMonitorService? service;
-    private CancellationTokenSource? monitorCancellation;
-    private Task? monitorTask;
+    private WatercoolerDeviceManager? deviceManager;
+    private bool monitoringRequested = true;
     private bool isConnecting;
     private bool isDisposing;
     private string status = "DESCONECTADO";
     private string message = "PRONTO";
+    private string deviceSummary = "NENHUM DISPOSITIVO";
     private double targetTemperature;
     private double displayedTemperature;
     private bool isConnected;
@@ -41,14 +41,10 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         };
         displayTimer.Tick += AnimateDisplay;
         reconnectTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(ReconnectIntervalMs) };
-        reconnectTimer.Tick += (_, _) =>
-        {
-            if (!IsConnected)
-                AttemptConnect();
-        };
+        reconnectTimer.Tick += async (_, _) => await AttemptConnectAsync();
 
         reconnectTimer.Start();
-        AttemptConnect();
+        _ = AttemptConnectAsync();
     }
 
     public bool IsStartupEnabled
@@ -91,6 +87,12 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     {
         get => message;
         private set => SetField(ref message, value);
+    }
+
+    public string DeviceSummary
+    {
+        get => deviceSummary;
+        private set => SetField(ref deviceSummary, value);
     }
 
     public string MinimumTemperatureText => minimumTemperature is null ? "--" : $"{minimumTemperature} °C";
@@ -138,102 +140,111 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<int>? HighTemperatureAlert;
 
-    private async void AttemptConnect()
+    private async Task AttemptConnectAsync()
     {
-        if (IsConnected || isConnecting || isDisposing)
+        if (isConnecting || isDisposing)
             return;
 
         isConnecting = true;
-        WatercoolerMonitorService? candidate = null;
         try
         {
-            // WMI, SerialPort.Open e LibreHardwareMonitor podem levar segundos;
-            // roda em segundo plano para não congelar a UI durante reconexões.
-            candidate = await Task.Run(() =>
-            {
-                string portName = Aqua240XPortDiscovery.FindPort();
-                AppLogger.Info($"Porta {portName} localizada.");
-                var reader = new CpuTemperatureReader();
-                var client = new Aqua240XSerialClient(portName, 9600);
-                var monitor = new WatercoolerMonitorService(reader, client, TimeSpan.FromMilliseconds(IntervalMs));
-                monitor.Open();
-                return monitor;
-            });
+            deviceManager ??= CreateDeviceManager();
+
+            bool wasConnected = IsConnected;
+            await deviceManager.ReconcileAsync();
+
+            if (monitoringRequested && deviceManager.IsConnected && !deviceManager.IsMonitoring)
+                deviceManager.StartMonitoring();
+
+            if (!wasConnected && deviceManager.IsConnected)
+                ResetStatistics();
+
+            UpdateConnectionState();
         }
         catch (Exception exception)
         {
-            candidate?.Dispose();
-            Status = "DESCONECTADO";
-            IsConnected = false;
-            Message = "AGUARDANDO WATERCOOLER";
             AppLogger.Error("Falha ao localizar ou conectar ao watercooler", exception);
-            isConnecting = false;
-            return;
+            UpdateConnectionState();
         }
-
-        if (isDisposing)
+        finally
         {
-            candidate.Dispose();
             isConnecting = false;
+        }
+    }
+
+    private WatercoolerDeviceManager CreateDeviceManager()
+    {
+        var manager = new WatercoolerDeviceManager();
+        manager.TemperatureRead += OnTemperatureRead;
+        manager.CpuUsageRead += OnCpuUsageRead;
+        manager.TemperatureSent += OnTemperatureSent;
+        manager.TemperatureUnavailable += OnTemperatureUnavailable;
+        manager.DevicesChanged += OnDevicesChanged;
+        manager.Error += OnManagerError;
+        return manager;
+    }
+
+    private void OnDevicesChanged()
+    {
+        if (System.Windows.Application.Current?.Dispatcher is { } dispatcher
+            && !dispatcher.CheckAccess())
+        {
+            dispatcher.InvokeAsync(UpdateConnectionState);
             return;
         }
 
-        service = candidate;
-        service.TemperatureRead += OnTemperatureRead;
-        service.CpuUsageRead += OnCpuUsageRead;
-        service.TemperatureSent += OnTemperatureSent;
-        service.TemperatureUnavailable += OnTemperatureUnavailable;
-        service.Error += OnServiceError;
-        IsConnected = true;
-        Status = "CONECTADO";
-        Message = "MONITORAMENTO ATIVO";
-        ResetStatistics();
-        StartMonitoring();
-        isConnecting = false;
+        UpdateConnectionState();
+    }
+
+    private void UpdateConnectionState()
+    {
+        bool connected = deviceManager?.IsConnected == true;
+        bool monitoring = deviceManager?.IsMonitoring == true;
+        bool connectionChanged = IsConnected != connected;
+        bool monitoringChanged = IsMonitoring != monitoring;
+
+        IsConnected = connected;
+        IsMonitoring = monitoring;
+        DeviceSummary = deviceManager?.DeviceSummary ?? "NENHUM DISPOSITIVO";
+
+        if (connectionChanged || monitoringChanged)
+        {
+            Status = connected ? "CONECTADO" : "DESCONECTADO";
+            Message = !connected
+                ? "AGUARDANDO WATERCOOLER"
+                : monitoring
+                    ? "MONITORAMENTO ATIVO"
+                    : "MONITORAMENTO PAUSADO";
+        }
     }
 
     public void StartMonitoring()
     {
-        if (service is null || IsMonitoring)
+        if (isDisposing)
             return;
 
-        monitorCancellation = new CancellationTokenSource();
-        monitorTask = Task.Run(() => service.StartAsync(monitorCancellation.Token), monitorCancellation.Token);
-        IsMonitoring = true;
+        monitoringRequested = true;
+        deviceManager?.StartMonitoring();
+        UpdateConnectionState();
     }
 
     public async Task StopMonitoringAsync(bool reportErrors = true)
     {
-        CancellationTokenSource? cancellation = monitorCancellation;
-        if (cancellation is null)
+        monitoringRequested = false;
+        if (deviceManager is null)
             return;
 
-        cancellation.Cancel();
         try
         {
-            if (monitorTask is not null)
-            {
-                await monitorTask;
-            }
-        }
-        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
-        {
+            await deviceManager.StopMonitoringAsync();
         }
         catch (Exception exception)
         {
             if (reportErrors)
                 Message = exception.Message;
         }
-        finally
-        {
-            cancellation.Dispose();
-            if (ReferenceEquals(monitorCancellation, cancellation))
-            {
-                monitorCancellation = null;
-                monitorTask = null;
-                IsMonitoring = false;
-            }
-        }
+
+        UpdateConnectionState();
     }
 
     private void OnTemperatureRead(int temperature)
@@ -263,10 +274,15 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         });
     }
 
-    private void OnTemperatureSent(int temperature, byte[] pacote)
+    private void OnTemperatureSent(int temperature, byte[] pacote, string deviceName)
     {
         System.Windows.Application.Current.Dispatcher.Invoke(() =>
-            Message = $"TEMPERATURA ENVIADA  {temperature:00} °C");
+        {
+            string suffix = deviceManager?.ConnectedDeviceCount > 1
+                ? $" • {deviceName}"
+                : string.Empty;
+            Message = $"TEMPERATURA ENVIADA  {temperature:00} °C{suffix}";
+        });
     }
 
     private void EvaluateTemperatureAlert(int temperature)
@@ -289,19 +305,18 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         System.Windows.Application.Current.Dispatcher.Invoke(() => Message = "SENSOR DA CPU INDISPONÍVEL");
     }
 
-    private void OnServiceError(Exception exception)
+    private void OnManagerError(Exception exception)
     {
-        AppLogger.Error("Monitoramento desconectado", exception);
-        System.Windows.Application.Current?.Dispatcher.InvokeAsync(async () =>
+        // O gerenciador já removeu a sessão com falha. Se ainda houver outro
+        // water cooler ativo, o programa continua normalmente com ele.
+        AppLogger.Error("Monitoramento de um watercooler desconectado", exception);
+        System.Windows.Application.Current?.Dispatcher.InvokeAsync(() =>
         {
-            IsConnected = false;
-            Status = "ERRO DE CONEXÃO";
-            Message = "TENTANDO RECONECTAR";
-            // Aguarda o loop encerrar antes de liberar os recursos,
-            // evitando Dispose durante serialClient.Send.
-            await StopMonitoringAsync(reportErrors: false);
-            service?.Dispose();
-            service = null;
+            if (deviceManager?.IsConnected != true)
+            {
+                Status = "ERRO DE CONEXÃO";
+                Message = "TENTANDO RECONECTAR";
+            }
         });
     }
 
@@ -344,11 +359,19 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         isDisposing = true;
         reconnectTimer.Stop();
 
-        if (monitorCancellation is not null)
-            await StopMonitoringAsync(reportErrors: false);
+        if (deviceManager is not null)
+        {
+            deviceManager.TemperatureRead -= OnTemperatureRead;
+            deviceManager.CpuUsageRead -= OnCpuUsageRead;
+            deviceManager.TemperatureSent -= OnTemperatureSent;
+            deviceManager.TemperatureUnavailable -= OnTemperatureUnavailable;
+            deviceManager.DevicesChanged -= OnDevicesChanged;
+            deviceManager.Error -= OnManagerError;
 
-        service?.Dispose();
-        service = null;
+            await deviceManager.DisposeAsync();
+            deviceManager = null;
+        }
+
         displayTimer.Stop();
     }
 
