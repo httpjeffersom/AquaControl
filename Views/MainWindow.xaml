@@ -106,7 +106,7 @@
                 <UniformGrid Rows="1"
                              Columns="3"
                              Width="270"
-                             Margin="0,16,0,0">
+                             Margin="0,24,0,0">
 
                     <StackPanel Margin="4,0">
 
@@ -154,7 +154,7 @@
                           FontSize="11"
                           Foreground="#778582"
                           HorizontalAlignment="Center"
-                          Margin="0,24,0,0" />
+                          Margin="0,48,0,0" />
 
             </StackPanel>
 
