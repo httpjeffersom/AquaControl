@@ -17,6 +17,30 @@
         Closing="WindowClosing"
         Icon="/Assets/AquaControl.png">
 
+    <Window.Resources>
+
+        <!-- Alterna o conteudo central entre "conectado" e "sem water
+             cooler" sem precisar de conversor. -->
+        <Style x:Key="ShownWhenConnected" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ShownWhenDisconnected" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
     <Border Background="#0B0E0F"
             BorderBrush="#26302F"
             BorderThickness="1"
@@ -62,33 +86,68 @@
                 <Grid Width="290"
                       Height="210">
 
-                    <controls:TemperatureRing
-                        Progress="{Binding Progress}"
-                        IndicatorBrush="{Binding IndicatorBrush}" />
+                    <!-- Sem water cooler: as mesmas 72 bolinhas ficam cheias e
+                         vermelhas, na mesma posição (Progress = 1). -->
+                    <controls:TemperatureRing>
+                        <controls:TemperatureRing.Style>
+                            <Style TargetType="controls:TemperatureRing">
+                                <Setter Property="Progress" Value="{Binding Progress}" />
+                                <Setter Property="IndicatorBrush" Value="{Binding IndicatorBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsConnected}" Value="False">
+                                        <Setter Property="Progress" Value="1" />
+                                        <Setter Property="IndicatorBrush" Value="#FF414B" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </controls:TemperatureRing.Style>
+                    </controls:TemperatureRing>
 
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
 
-                        <TextBlock Text="TEMPERATURA DA CPU"
-                                   FontSize="10"
-                                   HorizontalAlignment="Center"
-                                   Foreground="#778582" />
+                        <!-- Mesma área reservada nos dois estados, para o "USO
+                             DE CPU" não pular quando o cooler desaparece. -->
+                        <Grid MinHeight="72">
 
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,4,0,0">
+                            <StackPanel VerticalAlignment="Center"
+                                        Style="{StaticResource ShownWhenConnected}">
 
-                            <TextBlock Text="{Binding TemperatureText}"
-                                       FontFamily="Terminal"
-                                       FontSize="46"
-                                       Foreground="{Binding IndicatorBrush}" />
+                                <TextBlock Text="TEMPERATURA DA CPU"
+                                           FontSize="10"
+                                           HorizontalAlignment="Center"
+                                           Foreground="#778582" />
 
-                            <TextBlock Text="°C"
-                                       FontSize="13"
-                                       Margin="5,24,0,0"
-                                       Foreground="{Binding IndicatorBrush}" />
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Center"
+                                            Margin="0,4,0,0">
 
-                        </StackPanel>
+                                    <TextBlock Text="{Binding TemperatureText}"
+                                               FontFamily="Terminal"
+                                               FontSize="46"
+                                               Foreground="{Binding IndicatorBrush}" />
+
+                                    <TextBlock Text="°C"
+                                               FontSize="13"
+                                               Margin="5,24,0,0"
+                                               Foreground="{Binding IndicatorBrush}" />
+
+                                </StackPanel>
+
+                            </StackPanel>
+
+                            <TextBlock Text="NENHUM WATERCOOLER ENCONTRADO"
+                                       Style="{StaticResource ShownWhenDisconnected}"
+                                       FontSize="10"
+                                       LineHeight="15"
+                                       MaxWidth="150"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="#FF6B73" />
+
+                        </Grid>
 
                         <TextBlock Text="USO DE CPU"
                                    FontSize="9"
