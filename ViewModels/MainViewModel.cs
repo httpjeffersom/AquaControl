@@ -19,8 +19,12 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     private bool monitoringRequested = true;
     private bool isConnecting;
     private bool isDisposing;
-    private string status = "DESCONECTADO";
-    private string message = "PRONTO";
+    private string notice = string.Empty;
+    private DateTime? lastSentAt;
+    private int connectedDeviceCount;
+    private bool hasTemperature;
+    private bool isHighTemperature;
+    private int highTemperatureValue;
     private string deviceSummary = "NENHUM DISPOSITIVO";
     private double targetTemperature;
     private double displayedTemperature;
@@ -62,7 +66,8 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
             }
             catch (Exception exception)
             {
-                Message = exception.Message;
+                AppLogger.Error("Falha ao alterar a inicialização com o Windows", exception);
+                SetNotice("FALHA AO ALTERAR A INICIALIZAÇÃO COM O WINDOWS");
                 OnPropertyChanged();
             }
         }
@@ -73,31 +78,69 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         get => isMonitoring;
         private set
         {
-            SetField(ref isMonitoring, value);
+            if (SetField(ref isMonitoring, value))
+            {
+                OnPropertyChanged(nameof(ConnectionText));
+                OnPropertyChanged(nameof(ConnectionBrush));
+            }
         }
-    }
-
-    public string Status
-    {
-        get => status;
-        private set => SetField(ref status, value);
-    }
-
-    public string Message
-    {
-        get => message;
-        private set => SetField(ref message, value);
     }
 
     public string DeviceSummary
     {
         get => deviceSummary;
-        private set => SetField(ref deviceSummary, value);
+        private set
+        {
+            if (SetField(ref deviceSummary, value))
+                OnPropertyChanged(nameof(ConnectionText));
+        }
     }
 
-    public string MinimumTemperatureText => minimumTemperature is null ? "--" : $"{minimumTemperature} °C";
-    public string MaximumTemperatureText => maximumTemperature is null ? "--" : $"{maximumTemperature} °C";
-    public string AverageTemperatureText => temperatureSamples == 0 ? "--" : $"{averageTemperature:0} °C";
+    /// <summary>
+    /// Linha única de estado exibida abaixo do anel. Substitui o antigo bloco
+    /// "DISPOSITIVO" (que ocupava duas linhas e tinha uma bolinha ao lado).
+    /// </summary>
+    public string ConnectionText
+    {
+        get
+        {
+            if (!IsConnected)
+                return "NENHUM WATER COOLER CONECTADO";
+
+            if (!IsMonitoring)
+                return "MONITORAMENTO PAUSADO";
+
+            return connectedDeviceCount > 1
+                ? $"{connectedDeviceCount} WATER COOLERS CONECTADOS"
+                : $"WATER COOLER CONECTADO · {DeviceSummary}";
+        }
+    }
+
+    public System.Windows.Media.Brush ConnectionBrush =>
+        !IsConnected ? FaultBrush
+        : !IsMonitoring ? PausedBrush
+        : ConnectedBrush;
+
+    /// <summary>Erro atual (prioritário) ou horário da última leitura.</summary>
+    public string FooterText => notice.Length > 0
+        ? notice
+        : lastSentAt is null
+            ? IsConnected ? "AGUARDANDO PRIMEIRA LEITURA" : string.Empty
+            : $"ÚLTIMA LEITURA {lastSentAt:HH:mm:ss}";
+
+    public System.Windows.Media.Brush FooterBrush => notice.Length > 0 ? FaultBrush : MutedBrush;
+
+    public bool IsHighTemperature
+    {
+        get => isHighTemperature;
+        private set => SetField(ref isHighTemperature, value);
+    }
+
+    public string HighTemperatureText => $"TEMPERATURA ALTA · {highTemperatureValue} °C";
+
+    public string MinimumTemperatureText => IsConnected && minimumTemperature is not null ? $"{minimumTemperature} °C" : "--";
+    public string MaximumTemperatureText => IsConnected && maximumTemperature is not null ? $"{maximumTemperature} °C" : "--";
+    public string AverageTemperatureText => IsConnected && temperatureSamples != 0 ? $"{averageTemperature:0} °C" : "--";
     public string CpuUsageText => cpuUsage is null ? "--%" : $"{cpuUsage}%";
     public System.Windows.Media.Brush CpuUsageBrush => cpuUsage switch
     {
@@ -121,10 +164,10 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         }
     }
 
-    public string TemperatureText => $"{Math.Round(DisplayedTemperature):0}";
+    public string TemperatureText => hasTemperature ? $"{Math.Round(DisplayedTemperature):0}" : "--";
     public double Progress => Math.Clamp(DisplayedTemperature, 0, 100) / 100;
     public System.Windows.Media.Brush IndicatorBrush => CreateBrush(GetTemperatureColor(DisplayedTemperature));
-    public System.Windows.Media.Brush StatusBrush => IsConnected ? ConnectedBrush : DisconnectedBrush;
+
     public bool IsConnected
     {
         get => isConnected;
@@ -132,7 +175,12 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         {
             if (SetField(ref isConnected, value))
             {
-                OnPropertyChanged(nameof(StatusBrush));
+                OnPropertyChanged(nameof(ConnectionText));
+                OnPropertyChanged(nameof(ConnectionBrush));
+                OnPropertyChanged(nameof(MinimumTemperatureText));
+                OnPropertyChanged(nameof(MaximumTemperatureText));
+                OnPropertyChanged(nameof(AverageTemperatureText));
+                OnPropertyChanged(nameof(FooterText));
             }
         }
     }
@@ -200,22 +248,31 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     {
         bool connected = deviceManager?.IsConnected == true;
         bool monitoring = deviceManager?.IsMonitoring == true;
-        bool connectionChanged = IsConnected != connected;
-        bool monitoringChanged = IsMonitoring != monitoring;
+
+        // Preenche as dependências antes de IsConnected/IsMonitoring, porque os
+        // setters já notificam a linha de estado.
+        connectedDeviceCount = deviceManager?.ConnectedDeviceCount ?? 0;
+        DeviceSummary = deviceManager?.DeviceSummary ?? "NENHUM DISPOSITIVO";
 
         IsConnected = connected;
         IsMonitoring = monitoring;
-        DeviceSummary = deviceManager?.DeviceSummary ?? "NENHUM DISPOSITIVO";
 
-        if (connectionChanged || monitoringChanged)
+        if (!connected)
         {
-            Status = connected ? "CONECTADO" : "DESCONECTADO";
-            Message = !connected
-                ? "AGUARDANDO WATERCOOLER"
-                : monitoring
-                    ? "MONITORAMENTO ATIVO"
-                    : "MONITORAMENTO PAUSADO";
+            // Ao reconectar, o valor antigo não deve aparecer como se fosse
+            // uma leitura nova: volta para "--" até o primeiro envio.
+            if (hasTemperature)
+            {
+                hasTemperature = false;
+                OnPropertyChanged(nameof(TemperatureText));
+            }
+
+            if (IsHighTemperature)
+                IsHighTemperature = false;
         }
+
+        OnPropertyChanged(nameof(ConnectionText));
+        OnPropertyChanged(nameof(ConnectionBrush));
     }
 
     public void StartMonitoring()
@@ -240,8 +297,9 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         }
         catch (Exception exception)
         {
+            AppLogger.Error("Falha ao pausar o monitoramento", exception);
             if (reportErrors)
-                Message = exception.Message;
+                SetNotice("FALHA AO PAUSAR O MONITORAMENTO");
         }
 
         UpdateConnectionState();
@@ -253,6 +311,13 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         {
             targetTemperature = Math.Clamp(temperature, 0, 100);
             EvaluateTemperatureAlert(temperature);
+
+            if (!hasTemperature)
+            {
+                hasTemperature = true;
+                OnPropertyChanged(nameof(TemperatureText));
+            }
+
             temperatureSamples++;
             averageTemperature = ((averageTemperature * (temperatureSamples - 1)) + temperature) / temperatureSamples;
             minimumTemperature = minimumTemperature is null ? temperature : Math.Min(minimumTemperature.Value, temperature);
@@ -278,10 +343,11 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     {
         System.Windows.Application.Current.Dispatcher.Invoke(() =>
         {
-            string suffix = deviceManager?.ConnectedDeviceCount > 1
-                ? $" • {deviceName}"
-                : string.Empty;
-            Message = $"TEMPERATURA ENVIADA  {temperature:00} °C{suffix}";
+            // O envio a cada segundo não vira mensagem na tela (antes ele
+            // piscava "TEMPERATURA ENVIADA" e não sobrava espaço para erros).
+            lastSentAt = DateTime.Now;
+            SetNotice(string.Empty);
+            OnPropertyChanged(nameof(FooterText));
         });
     }
 
@@ -290,19 +356,36 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         if (temperature <= AlertResetThreshold)
         {
             highTemperatureAlertShown = false;
+            if (isHighTemperature)
+            {
+                highTemperatureValue = 0;
+                IsHighTemperature = false;
+                OnPropertyChanged(nameof(HighTemperatureText));
+            }
             return;
         }
 
         if (temperature >= HighTemperatureThreshold && !highTemperatureAlertShown)
         {
             highTemperatureAlertShown = true;
+            highTemperatureValue = temperature;
+            IsHighTemperature = true;
+            OnPropertyChanged(nameof(HighTemperatureText));
             HighTemperatureAlert?.Invoke(temperature);
+            return;
+        }
+
+        if (isHighTemperature)
+        {
+            highTemperatureValue = temperature;
+            OnPropertyChanged(nameof(HighTemperatureText));
         }
     }
 
     private void OnTemperatureUnavailable()
     {
-        System.Windows.Application.Current.Dispatcher.Invoke(() => Message = "SENSOR DA CPU INDISPONÍVEL");
+        System.Windows.Application.Current.Dispatcher.Invoke(
+            () => SetNotice("SENSOR DA CPU INDISPONÍVEL"));
     }
 
     private void OnManagerError(Exception exception)
@@ -313,10 +396,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         System.Windows.Application.Current?.Dispatcher.InvokeAsync(() =>
         {
             if (deviceManager?.IsConnected != true)
-            {
-                Status = "ERRO DE CONEXÃO";
-                Message = "TENTANDO RECONECTAR";
-            }
+                SetNotice("PERDA DE COMUNICAÇÃO COM O WATER COOLER");
         });
     }
 
@@ -335,14 +415,16 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
     private static System.Windows.Media.Color GetTemperatureColor(double temperature)
     {
-        if (temperature <= 70)
+        // O anel fica completamente vermelho a partir de 90 °C, que é o mesmo
+        // ponto em que o alerta de temperatura alta dispara.
+        if (temperature <= 65)
             return System.Windows.Media.Color.FromRgb(83, 235, 151);
         if (temperature <= 80)
-            return Interpolate(System.Windows.Media.Color.FromRgb(83, 235, 151), System.Windows.Media.Color.FromRgb(245, 213, 73), (temperature - 70) / 10);
-        if (temperature <= 90)
-            return Interpolate(System.Windows.Media.Color.FromRgb(245, 213, 73), System.Windows.Media.Color.FromRgb(245, 137, 54), (temperature - 80) / 10);
+            return Interpolate(System.Windows.Media.Color.FromRgb(83, 235, 151), System.Windows.Media.Color.FromRgb(245, 213, 73), (temperature - 65) / 15);
+        if (temperature < 90)
+            return Interpolate(System.Windows.Media.Color.FromRgb(245, 213, 73), System.Windows.Media.Color.FromRgb(255, 65, 75), (temperature - 80) / 10);
 
-        return Interpolate(System.Windows.Media.Color.FromRgb(245, 137, 54), System.Windows.Media.Color.FromRgb(255, 65, 75), (temperature - 90) / 10);
+        return System.Windows.Media.Color.FromRgb(255, 65, 75);
     }
 
     private static System.Windows.Media.Color Interpolate(System.Windows.Media.Color from, System.Windows.Media.Color to, double amount)
@@ -387,6 +469,9 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     }
 
     private static readonly System.Windows.Media.Brush ConnectedBrush = CreateBrush(System.Windows.Media.Color.FromRgb(83, 235, 151));
+    private static readonly System.Windows.Media.Brush PausedBrush = CreateBrush(System.Windows.Media.Color.FromRgb(245, 213, 73));
+    private static readonly System.Windows.Media.Brush FaultBrush = CreateBrush(System.Windows.Media.Color.FromRgb(255, 65, 75));
+    private static readonly System.Windows.Media.Brush MutedBrush = CreateBrush(System.Windows.Media.Color.FromRgb(139, 158, 154));
     private static readonly System.Windows.Media.Brush DisconnectedBrush = CreateBrush(System.Windows.Media.Color.FromRgb(104, 116, 113));
     private static readonly System.Windows.Media.Brush ElevatedCpuUsageBrush = CreateBrush(System.Windows.Media.Color.FromRgb(245, 137, 54));
     private static readonly System.Windows.Media.Brush HighCpuUsageBrush = CreateBrush(System.Windows.Media.Color.FromRgb(255, 65, 75));
@@ -396,6 +481,16 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         var brush = new SolidColorBrush(color);
         brush.Freeze();
         return brush;
+    }
+
+    private void SetNotice(string value)
+    {
+        if (notice == value)
+            return;
+
+        notice = value;
+        OnPropertyChanged(nameof(FooterText));
+        OnPropertyChanged(nameof(FooterBrush));
     }
 
     private bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

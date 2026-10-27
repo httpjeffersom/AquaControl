@@ -3,194 +3,349 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:WatercoolerTemp.Controls"
         Title="Aqua Control"
-        Width="390"
-        Height="500"
-        MinWidth="360"
-        MinHeight="380"
+        Width="400"
+        Height="540"
+        MinWidth="340"
+        MinHeight="420"
         WindowStyle="None"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         AllowsTransparency="True"
         Background="Transparent"
         Foreground="#E9F2F0"
         FontFamily="{StaticResource DisplayFont}"
+        TextOptions.TextFormattingMode="Display"
         WindowStartupLocation="CenterScreen"
         Closing="WindowClosing"
+        PreviewKeyDown="WindowKeyDown"
         Icon="/Assets/AquaControl.png">
 
-    <Border Background="#0B0E0F"
-            BorderBrush="#26302F"
-            BorderThickness="1"
-            CornerRadius="12"
-            Padding="18">
+    <Window.Resources>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="28" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <FontFamily x:Key="NumericFont">Cascadia Mono, Consolas, Courier New</FontFamily>
 
-            <Grid Grid.Row="0"
-                  Background="Transparent"
-                  Cursor="SizeAll"
-                  MouseLeftButtonDown="DragWindow">
+        <!-- Anel do dashboard. Sem water cooler: todos os 72 pontos ficam
+             vermelhos e o conjunto pisca num ciclo de 5 segundos. -->
+        <Style x:Key="DashboardRing" TargetType="controls:TemperatureRing">
+            <Setter Property="Progress" Value="{Binding Progress}" />
+            <Setter Property="IndicatorBrush" Value="{Binding IndicatorBrush}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnected}" Value="False">
+                    <Setter Property="Progress" Value="1" />
+                    <Setter Property="IndicatorBrush" Value="{StaticResource FaultBrush}" />
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="disconnectedBlink">
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                    <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1" />
+                                    <LinearDoubleKeyFrame KeyTime="0:0:1.4" Value="0.35" />
+                                    <LinearDoubleKeyFrame KeyTime="0:0:2.4" Value="0.35" />
+                                    <LinearDoubleKeyFrame KeyTime="0:0:3.8" Value="1" />
+                                    <LinearDoubleKeyFrame KeyTime="0:0:5" Value="1" />
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <RemoveStoryboard BeginStoryboardName="disconnectedBlink" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
-                <TextBlock Text="AQUA CONTROL"
-                           FontSize="13"
-                           FontWeight="SemiBold"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Foreground="#9AA8A5" />
+    </Window.Resources>
 
-                <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Right">
+    <Grid>
 
-                    <Button Content="−"
-                            Click="MinimizeWindow"
-                            Style="{StaticResource WindowButton}" />
+        <!-- Camada estática apenas para a sombra: o efeito fica isolado do
+             conteúdo animado, então não é recalculado a cada frame. -->
+        <Border Margin="10"
+                CornerRadius="12"
+                Background="#0B0E0F"
+                BorderBrush="#1A2221"
+                BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="16"
+                                  ShadowDepth="0"
+                                  Opacity="0.6"
+                                  Color="#000000" />
+            </Border.Effect>
+        </Border>
 
-                    <Button Content="×"
-                            Click="CloseWindow"
-                            Style="{StaticResource WindowButton}" />
+        <Border x:Name="ContentFrame"
+                Margin="10"
+                Background="#0B0E0F"
+                BorderBrush="#26302F"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="18,12,18,16">
 
-                </StackPanel>
-            </Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="1"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+                <Grid Grid.Row="0"
+                      Background="Transparent"
+                      Cursor="SizeAll"
+                      MouseLeftButtonDown="DragWindow">
 
-                <Grid Width="290"
-                      Height="210">
+                    <TextBlock Text="AQUA CONTROL"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
 
-                    <controls:TemperatureRing
-                        Progress="{Binding Progress}"
-                        IndicatorBrush="{Binding IndicatorBrush}" />
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
 
-                    <StackPanel HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
+                        <Button Content="−"
+                                Click="MinimizeWindow"
+                                Style="{StaticResource WindowButton}"
+                                ToolTip="Minimizar"
+                                AutomationProperties.Name="Minimizar janela"
+                                AutomationProperties.HelpText="Envia a janela para a barra de tarefas; o monitoramento continua." />
 
-                        <TextBlock Text="TEMPERATURA DA CPU"
-                                   FontSize="10"
-                                   HorizontalAlignment="Center"
-                                   Foreground="#778582" />
+                        <Button Content="×"
+                                Click="CloseWindow"
+                                Style="{StaticResource WindowButton}"
+                                ToolTip="Fechar o Aqua Control"
+                                AutomationProperties.Name="Fechar o Aqua Control"
+                                AutomationProperties.HelpText="Pergunta se deseja encerrar o monitoramento e sair." />
 
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,4,0,0">
-
-                            <TextBlock Text="{Binding TemperatureText}"
-                                       FontFamily="Terminal"
-                                       FontSize="46"
-                                       Foreground="{Binding IndicatorBrush}" />
-
-                            <TextBlock Text="°C"
-                                       FontSize="13"
-                                       Margin="5,24,0,0"
-                                       Foreground="{Binding IndicatorBrush}" />
-
-                        </StackPanel>
-
-                        <TextBlock Text="USO DE CPU"
-                                   FontSize="9"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,4,0,0"
-                                   Foreground="#778582" />
-
-                        <TextBlock Text="{Binding CpuUsageText}"
-                                   FontSize="16"
-                                   HorizontalAlignment="Center"
-                                   Foreground="{Binding CpuUsageBrush}" />
                     </StackPanel>
                 </Grid>
 
-                <StackPanel HorizontalAlignment="Center"
-                            Margin="0,6,0,0">
+                <Viewbox Grid.Row="1"
+                         Margin="0,4,0,0"
+                         Stretch="Uniform"
+                         StretchDirection="Both">
 
-                    <StackPanel Orientation="Horizontal"
+                    <StackPanel Width="340">
+
+                        <Grid Width="300"
+                              Height="300"
+                              HorizontalAlignment="Center"
+                              Background="Transparent">
+
+                            <controls:TemperatureRing Style="{StaticResource DashboardRing}" />
+
+                            <StackPanel HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+
+                                <TextBlock Text="TEMPERATURA DA CPU"
+                                           FontSize="10"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           Style="{StaticResource VisibleWhenConnected}" />
+
+                                <Grid Height="64"
+                                      Margin="0,2,0,0">
+
+                                    <TextBlock Style="{StaticResource VisibleWhenConnected}"
+                                               FontFamily="{StaticResource NumericFont}"
+                                               FontSize="48"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Foreground="{Binding IndicatorBrush}">
+                                        <Run Text="{Binding TemperatureText, Mode=OneWay}" />
+                                        <Run Text=" °C" FontSize="16" />
+                                    </TextBlock>
+
+                                    <TextBlock Style="{StaticResource VisibleWhenDisconnected}"
+                                               Text="WATERCOOLER NÃO ENCONTRADO"
+                                               FontSize="13"
+                                               FontWeight="SemiBold"
+                                               LineHeight="17"
+                                               MaxWidth="220"
+                                               TextAlignment="Center"
+                                               TextWrapping="Wrap"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Foreground="#FF6B73" />
+
+                                </Grid>
+
+                                <TextBlock Text="USO DE CPU"
+                                           FontSize="10"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,6,0,0"
+                                           Foreground="{StaticResource TextMutedBrush}" />
+
+                                <TextBlock Text="{Binding CpuUsageText}"
+                                           FontSize="18"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,1,0,0"
+                                           Foreground="{Binding CpuUsageBrush}" />
+
+                            </StackPanel>
+
+                        </Grid>
+
+                        <!-- Uma única linha com o estado, sem bolinha ao lado. -->
+                        <TextBlock Text="{Binding ConnectionText}"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,14,0,0"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{Binding ConnectionBrush}"
+                                   ToolTip="{Binding DeviceSummary}"
+                                   AutomationProperties.LiveSetting="Polite" />
+
+                        <Border Style="{StaticResource VisibleWhenAlert}"
+                                Background="#2A1517"
+                                BorderBrush="#5C2228"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="10,5"
+                                Margin="0,10,0,0"
                                 HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding HighTemperatureText}"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="#FF8A8F" />
+                        </Border>
 
-                        <Ellipse Width="7"
-                                 Height="7"
-                                 Fill="{Binding StatusBrush}"
-                                 VerticalAlignment="Center" />
+                        <UniformGrid Columns="3"
+                                     Width="300"
+                                     Margin="0,14,0,0">
 
-                        <TextBlock Text="DISPOSITIVO"
+                            <StackPanel>
+                                <TextBlock Text="MÍNIMA"
+                                           FontSize="10"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{StaticResource TextMutedBrush}" />
+                                <TextBlock Text="{Binding MinimumTemperatureText}"
+                                           FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,2,0,0"
+                                           Foreground="{StaticResource TextPrimaryBrush}" />
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="MÉDIA"
+                                           FontSize="10"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{StaticResource TextMutedBrush}" />
+                                <TextBlock Text="{Binding AverageTemperatureText}"
+                                           FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,2,0,0"
+                                           Foreground="{StaticResource TextPrimaryBrush}" />
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock Text="MÁXIMA"
+                                           FontSize="10"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{StaticResource TextMutedBrush}" />
+                                <TextBlock Text="{Binding MaximumTemperatureText}"
+                                           FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,2,0,0"
+                                           Foreground="{StaticResource TextPrimaryBrush}" />
+                            </StackPanel>
+
+                        </UniformGrid>
+
+                        <!-- Erro atual ou horário da última leitura. -->
+                        <TextBlock Text="{Binding FooterText}"
                                    FontSize="10"
-                                   Margin="7,0,0,0"
-                                   Foreground="#9AA8A5" />
+                                   HorizontalAlignment="Center"
+                                   Margin="0,10,0,0"
+                                   MaxWidth="320"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{Binding FooterBrush}"
+                                   ToolTip="{Binding FooterText}" />
+
+                        <CheckBox Content="Iniciar com o Windows"
+                                  IsChecked="{Binding IsStartupEnabled, Mode=TwoWay}"
+                                  Style="{StaticResource DarkCheckBox}"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,18,0,0"
+                                  AutomationProperties.Name="Iniciar com o Windows" />
 
                     </StackPanel>
 
-                    <TextBlock Text="{Binding Status}"
-                               FontSize="11"
-                               HorizontalAlignment="Center"
-                               Margin="0,2,0,0" />
+                </Viewbox>
 
-                    <TextBlock Text="{Binding DeviceSummary}"
-                               FontSize="9"
-                               HorizontalAlignment="Center"
-                               Margin="0,1,0,0"
-                               Foreground="#778582" />
+            </Grid>
+
+        </Border>
+
+        <!-- Confirmação de saída no tema da janela (o MessageBox padrão do
+             WPF abria uma caixa clara e destoava do restante). -->
+        <Border x:Name="ExitOverlay"
+                Margin="10"
+                CornerRadius="12"
+                Background="#F20B0E0F"
+                Visibility="Collapsed">
+
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        MaxWidth="300">
+
+                <TextBlock Text="ENCERRAR O AQUA CONTROL?"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           TextAlignment="Center"
+                           Foreground="{StaticResource TextPrimaryBrush}" />
+
+                <TextBlock Text="O envio de temperatura para o water cooler será interrompido."
+                           FontSize="11"
+                           LineHeight="16"
+                           Margin="0,8,0,0"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           Foreground="{StaticResource TextSecondaryBrush}" />
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,18,0,0">
+
+                    <Button x:Name="CancelExitButton"
+                            Content="CANCELAR"
+                            Click="CancelExit"
+                            Style="{StaticResource DialogButton}" />
+
+                    <Button Content="ENCERRAR"
+                            Click="ConfirmExit"
+                            Margin="10,0,0,0"
+                            Style="{StaticResource DangerButton}" />
 
                 </StackPanel>
 
-                <UniformGrid Rows="1"
-                             Columns="3"
-                             Width="270"
-                             Margin="0,16,0,0">
-
-                    <StackPanel Margin="4,0">
-
-                        <TextBlock Text="MÍNIMA"
-                                   FontSize="9"
-                                   Foreground="#5F706C"
-                                   HorizontalAlignment="Center" />
-
-                        <TextBlock Text="{Binding MinimumTemperatureText}"
-                                   FontSize="13"
-                                   HorizontalAlignment="Center" />
-
-                    </StackPanel>
-
-                    <StackPanel Margin="4,0">
-
-                        <TextBlock Text="MÉDIA"
-                                   FontSize="9"
-                                   Foreground="#5F706C"
-                                   HorizontalAlignment="Center" />
-
-                        <TextBlock Text="{Binding AverageTemperatureText}"
-                                   FontSize="13"
-                                   HorizontalAlignment="Center" />
-
-                    </StackPanel>
-
-                    <StackPanel Margin="4,0">
-
-                        <TextBlock Text="MÁXIMA"
-                                   FontSize="9"
-                                   Foreground="#5F706C"
-                                   HorizontalAlignment="Center" />
-
-                        <TextBlock Text="{Binding MaximumTemperatureText}"
-                                   FontSize="13"
-                                   HorizontalAlignment="Center" />
-
-                    </StackPanel>
-
-                </UniformGrid>
-
-                <CheckBox Content="Iniciar com o Windows"
-                          IsChecked="{Binding IsStartupEnabled, Mode=TwoWay}"
-                          FontSize="11"
-                          Foreground="#778582"
-                          HorizontalAlignment="Center"
-                          Margin="0,24,0,0" />
-
             </StackPanel>
 
-        </Grid>
+        </Border>
 
-    </Border>
+        <!-- Alça de redimensionamento: a janela sem moldura não tem grip
+             nativo, então o tamanho era fixo e podia cortar conteúdo. -->
+        <Thumb Width="18"
+               Height="18"
+               Margin="0,0,11,11"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Bottom"
+               Cursor="SizeNWSE"
+               Opacity="0.5"
+               DragDelta="ResizeWindow"
+               ToolTip="Redimensionar"
+               AutomationProperties.Name="Redimensionar janela">
+            <Thumb.Template>
+                <ControlTemplate TargetType="Thumb">
+                    <Grid Background="Transparent">
+                        <Path Data="M 11,3 L 3,11 M 15,7 L 7,15"
+                              Stroke="#5A6E69"
+                              StrokeThickness="1.3"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round" />
+                    </Grid>
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+
+    </Grid>
 
 </Window>

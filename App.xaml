@@ -3,27 +3,189 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
-        <FontFamily x:Key="DisplayFont">Cascadia Mono</FontFamily>
+
+        <!-- Cascadia Mono não vem instalada com o Windows (chega junto com o
+             Windows Terminal). A lista de fallback mantém a mesma métrica
+             monoespaçada em qualquer máquina. -->
+        <FontFamily x:Key="DisplayFont">Cascadia Mono, Consolas, Courier New</FontFamily>
+
+        <!-- Paleta. Os tons de texto secundário foram escolhidos para passar
+             de 4,5:1 de contraste sobre #0B0E0F (WCAG AA). -->
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#E9F2F0" />
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A9B8B4" />
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#8B9E9A" />
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#151B1B" />
+        <SolidColorBrush x:Key="LineBrush" Color="#2D3A38" />
+        <SolidColorBrush x:Key="ConnectedBrush" Color="#53EB97" />
+        <SolidColorBrush x:Key="PausedBrush" Color="#F5D949" />
+        <SolidColorBrush x:Key="FaultBrush" Color="#FF414B" />
+
+        <!-- Botões do cabeçalho: antes eram texto puro, sem hover, foco ou
+             área de clique previsível. -->
         <Style x:Key="WindowButton" TargetType="Button">
-            <Setter Property="Width" Value="24" />
-            <Setter Property="Height" Value="24" />
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Margin" Value="4,0,0,0" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="Margin" Value="2,0,0,0" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground" Value="#71807D" />
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Foreground" Value="#8B9E9A" />
             <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="#1A2221" />
+                                <Setter Property="Foreground" Value="#E9F2F0" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="#243030" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="#3A4A47" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
-        <Style x:Key="ActionButton" TargetType="Button">
-            <Setter Property="Width" Value="210" />
-            <Setter Property="Height" Value="32" />
-            <Setter Property="Padding" Value="8,0" />
-            <Setter Property="Background" Value="#151B1B" />
-            <Setter Property="BorderBrush" Value="#2D3A38" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Foreground" Value="#A7B8B3" />
+
+        <!-- CheckBox do tema escuro: o controle padrão do WPF desenha a caixa
+             clara do Aero2 e destoava do restante da janela. -->
+        <Style x:Key="DarkCheckBox" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
             <Setter Property="FontSize" Value="11" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" Background="Transparent">
+                            <Border x:Name="Box"
+                                    Width="15"
+                                    Height="15"
+                                    VerticalAlignment="Center"
+                                    CornerRadius="3"
+                                    Background="{StaticResource SurfaceBrush}"
+                                    BorderBrush="#3A4A47"
+                                    BorderThickness="1">
+                                <Path x:Name="Check"
+                                      Data="M 2,6.5 L 5.2,9.7 L 10.4,3.8"
+                                      Stroke="#0B0E0F"
+                                      StrokeThickness="1.8"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      Visibility="Collapsed" />
+                            </Border>
+                            <ContentPresenter Margin="7,0,0,0"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Box" Property="Background" Value="{StaticResource ConnectedBrush}" />
+                                <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource ConnectedBrush}" />
+                                <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Box" Property="BorderBrush" Value="#6F8A84" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource ConnectedBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
+
+        <!-- Botões de diálogo (confirmação de saída). -->
+        <ControlTemplate x:Key="DialogButtonTemplate" TargetType="Button">
+            <Grid>
+                <Border x:Name="Bg"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6" />
+                <Border x:Name="Hover"
+                        Background="#14FFFFFF"
+                        CornerRadius="6"
+                        Opacity="0" />
+                <ContentPresenter HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Hover" Property="Opacity" Value="1" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="Hover" Property="Background" Value="#26FFFFFF" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter TargetName="Bg" Property="BorderBrush" Value="#6F8A84" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style x:Key="DialogButton" TargetType="Button">
+            <Setter Property="Width" Value="110" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template" Value="{StaticResource DialogButtonTemplate}" />
+        </Style>
+
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource DialogButton}">
+            <Setter Property="Background" Value="#2A1517" />
+            <Setter Property="BorderBrush" Value="#5C2228" />
+            <Setter Property="Foreground" Value="#FF8A8F" />
+        </Style>
+
+        <!-- Estilos de estado reaproveitados pela janela; evitam conversores. -->
+        <Style x:Key="VisibleWhenConnected" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="VisibleWhenDisconnected" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Visible" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="VisibleWhenAlert" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsHighTemperature}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
     </Application.Resources>
 </Application>
