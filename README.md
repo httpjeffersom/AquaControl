@@ -6,7 +6,7 @@ instalado.
 
 Hoje o projeto cobre duas famílias: a linha **Pichau Aqua** (controlador CH340,
 via porta serial) e a família **Rise Mode Aura Ice** (HID nativo do Windows). O
-programa detecta qual delas o PC tem e controla **um water cooler por vez**;
+programa detecta qual delas o PC tem e controla;
 cada família tem sessão, transporte e protocolo independentes.
 
 <p align="center">
