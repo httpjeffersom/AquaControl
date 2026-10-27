@@ -4,12 +4,15 @@ using WatercoolerTemp.Core.RiseModeAuraIce;
 namespace WatercoolerTemp.Core;
 
 /// <summary>
-/// Coordena todos os water coolers suportados. Cada dispositivo tem sua
-/// própria sessão, transporte e protocolo; o gerenciador apenas descobre,
-/// abre, inicia, remove e encaminha os eventos para a interface.
+/// Coordena os water coolers suportados. Cada dispositivo tem sua própria
+/// sessão, transporte e protocolo; o gerenciador apenas descobre, abre,
+/// inicia, remove e encaminha os eventos para a interface.
 ///
-/// A chave de cada sessão é única (porta COM do Pichau ou caminho HID do Rise
-/// Mode), impedindo que duas sessões controlem o mesmo dispositivo.
+/// O app foi desenhado para um único water cooler por PC: o gerenciador
+/// identifica qual família está presente (Pichau Aqua ou Rise Mode Aura Ice) e
+/// controla somente ela. Um PC com os dois conectados não é um cenário
+/// suportado; se acontecer, o primeiro encontrado fica ativo e o outro é
+/// ignorado até o primeiro sair.
 /// </summary>
 public sealed class WatercoolerDeviceManager : IAsyncDisposable
 {
@@ -31,7 +34,7 @@ public sealed class WatercoolerDeviceManager : IAsyncDisposable
 
     public event Action<int>? TemperatureRead;
     public event Action<int?>? CpuUsageRead;
-    public event Action<int, byte[], string>? TemperatureSent;
+    public event Action<int, byte[]>? TemperatureSent;
     public event Action? TemperatureUnavailable;
     public event Action<Exception>? Error;
     public event Action? DevicesChanged;
@@ -51,15 +54,6 @@ public sealed class WatercoolerDeviceManager : IAsyncDisposable
         {
             lock (gate)
                 return monitoringRequested && activeDevices.Values.Any(device => device.Loop is not null);
-        }
-    }
-
-    public int ConnectedDeviceCount
-    {
-        get
-        {
-            lock (gate)
-                return activeDevices.Count;
         }
     }
 
@@ -107,12 +101,15 @@ public sealed class WatercoolerDeviceManager : IAsyncDisposable
 
             foreach (DeviceDescriptor descriptor in discovered)
             {
-                bool alreadyActive;
+                bool hasActiveDevice;
                 lock (gate)
-                    alreadyActive = activeDevices.ContainsKey(descriptor.Key);
+                    hasActiveDevice = activeDevices.Count > 0;
 
-                if (alreadyActive)
-                    continue;
+                // Um PC tem um water cooler só. Depois que um está ativo, os
+                // demais candidatos (cenário teórico de dois conectados) não
+                // são abertos: o segundo só entra se o primeiro sair.
+                if (hasActiveDevice)
+                    break;
 
                 IWatercoolerDeviceSession session;
                 try
@@ -281,7 +278,7 @@ public sealed class WatercoolerDeviceManager : IAsyncDisposable
         device.Session.CpuUsageRead += usage => ForwardCpuUsage(key, usage);
         device.Session.TemperatureUnavailable += () => ForwardTemperatureUnavailable(key);
         device.Session.TemperatureSent += (temperature, packet) =>
-            TemperatureSent?.Invoke(temperature, packet, device.Descriptor.DisplayName);
+            TemperatureSent?.Invoke(temperature, packet);
         device.Session.Error += exception => _ = HandleSessionErrorAsync(key, exception);
     }
 

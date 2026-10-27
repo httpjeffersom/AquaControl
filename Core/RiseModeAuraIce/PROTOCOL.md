@@ -105,9 +105,10 @@ seja necessário para este display. Não enviamos comandos não confirmados.
 - Falha ao abrir o HID: a sessão não é adicionada e o dispositivo é procurado
   novamente a cada 5 segundos.
 - Falha de escrita durante o monitoramento: a sessão é encerrada e liberada; o
-  outro water cooler, se estiver conectado, continua funcionando.
-- O gerenciador usa o caminho HID (`DevicePath`) como identidade. Duas sessões
-  não podem controlar o mesmo caminho ao mesmo tempo.
+  app volta a procurar um water cooler.
+- O app controla um dispositivo por PC. O caminho HID (`DevicePath`) é a
+  identidade da sessão; nenhuma outra sessão é aberta enquanto ela estiver
+  ativa.
 - Ausência de dispositivo não lança exceção para a interface.
 
 ## Funcionalidades comprovadamente suportadas

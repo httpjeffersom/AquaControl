@@ -237,14 +237,11 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         });
     }
 
-    private void OnTemperatureSent(int temperature, byte[] pacote, string deviceName)
+    private void OnTemperatureSent(int temperature, byte[] pacote)
     {
         System.Windows.Application.Current.Dispatcher.Invoke(() =>
         {
-            string suffix = deviceManager?.ConnectedDeviceCount > 1
-                ? $" • {deviceName}"
-                : string.Empty;
-            Message = $"TEMPERATURA ENVIADA  {temperature:00} °C{suffix}";
+            Message = $"TEMPERATURA ENVIADA  {temperature:00} °C";
         });
     }
 

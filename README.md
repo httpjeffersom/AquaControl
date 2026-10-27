@@ -5,9 +5,9 @@ display de water coolers compatíveis, sem driver de kernel próprio e sem servi
 instalado.
 
 Hoje o projeto cobre duas famílias: a linha **Pichau Aqua** (controlador CH340,
-via porta serial) e a família **Rise Mode Aura Ice** (HID nativo do Windows). Os
-dois podem funcionar ao mesmo tempo, e cada um tem sessão, transporte e
-protocolo independentes.
+via porta serial) e a família **Rise Mode Aura Ice** (HID nativo do Windows). O
+programa detecta qual delas o PC tem e controla **um water cooler por vez**;
+cada família tem sessão, transporte e protocolo independentes.
 
 <p align="center">
   <img width="1113" height="591" alt="Aqua Control" src="https://github.com/user-attachments/assets/73fcdad7-a6cc-4f40-b2a2-07d0ba13af9b" />
@@ -31,9 +31,10 @@ a interface. Nenhum dado sai do computador.
 ## Principais funcionalidades
 
 - detecção automática dos water coolers suportados por VID/PID
+- detecção única: identifica se o PC tem Pichau **ou** Rise Mode e controla
+  apenas o dispositivo encontrado
 - leitura da temperatura da CPU com uma única instância do leitor de sensores
-- envio da temperatura para o display de cada cooler
-- suporte simultâneo a mais de um water cooler, sem conflito de sessão
+- envio da temperatura para o display do cooler
 - reconexão automática a cada 5 segundos quando o dispositivo desaparece
 - interface WPF com anel de temperatura, uso de CPU e estatísticas da sessão
 - estado visual de "sem water cooler": anel vermelho e mensagem no lugar da
@@ -72,20 +73,24 @@ O protocolo detalhado do Rise Mode, com as evidências e o que **não** foi
 implementado, está em
 [`Core/RiseModeAuraIce/PROTOCOL.md`](Core/RiseModeAuraIce/PROTOCOL.md).
 
+> O Aqua Control foi desenhado para **um water cooler por PC**. Se dois forem
+> conectados ao mesmo tempo (cenário não suportado), apenas o primeiro
+> encontrado é controlado; o segundo fica intocado.
+
 ## Como funciona
 
 1. O gerenciador procura os dois tipos de dispositivo: portas seriais CH340 do
    Pichau e dispositivos HID do Rise Mode.
-2. Cada dispositivo encontrado ganha uma sessão própria, identificada pela porta
-   COM ou pelo caminho HID — duas sessões nunca controlam o mesmo dispositivo.
-3. Um único `CpuTemperatureReader` compartilhado lê a temperatura da CPU para
-   todas as sessões (o LibreHardwareMonitor não é seguro com duas instâncias).
-4. Cada driver monta o pacote no seu protocolo:
+2. O primeiro dispositivo compatível encontrado ganha uma sessão. Enquanto ela
+   estiver ativa, nenhum outro candidato é aberto: o app assume um water cooler
+   por PC e trabalha com **Pichau ou Rise Mode**, nunca os dois.
+3. Um único `CpuTemperatureReader` compartilhado lê a temperatura da CPU.
+4. O driver da família detectada monta o pacote no seu protocolo:
    - **Pichau Aqua**: payload de 23 bytes pela serial, a cada 1 segundo.
    - **Rise Mode**: relatório HID de 9 bytes (Report ID 0 + 8 bytes), com burst
      de 5 escritas a cada 50 ms para o display acompanhar rápido.
-5. A interface reflete o estado agregado: conectado, sem dispositivo ou
-   monitoramento pausado.
+5. A interface reflete o estado do water cooler detectado: conectado, sem
+   dispositivo ou monitoramento pausado.
 
 ## Interface
 
@@ -232,6 +237,8 @@ AquaControl/
 
 - o software oficial do water cooler (Pichau ou Rise Mode) não deve estar em
   execução ao mesmo tempo
+- o app trabalha com um water cooler por PC; se dois forem conectados, apenas o
+  primeiro encontrado é controlado
 - o Rise Mode não expõe nome comercial legível; quem apresentar os
   identificadores `0xAA88/0x8666` sem relatório de saída compatível é ignorado
 - outros water coolers com o mesmo controlador (por exemplo, revendas como
@@ -274,8 +281,8 @@ esse material que permite implementar o protocolo sem chutes.
 - [x] Inicialização com o Windows
 - [x] Sem driver personalizado de kernel
 - [x] Suporte ao Rise Mode Aura Ice via HID nativo (driver independente)
-- [x] Coexistência de Pichau + Rise Mode ao mesmo tempo
-- [x] Reconexão automática por dispositivo
+- [x] Detecção única: Pichau **ou** Rise Mode, um water cooler por PC
+- [x] Reconexão automática do dispositivo
 - [x] Testes automatizados de protocolo e detecção
 - [ ] Novas famílias de water coolers com visor de temperatura
 
