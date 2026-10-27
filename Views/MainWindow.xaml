@@ -103,23 +103,6 @@
                     </StackPanel>
                 </Grid>
 
-                <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            Margin="0,8,0,0">
-
-                    <TextBlock Text="DISPOSITIVO"
-                               FontSize="10"
-                               VerticalAlignment="Center"
-                               Foreground="#9AA8A5" />
-
-                    <TextBlock Text="{Binding Status}"
-                               FontSize="11"
-                               Margin="7,0,0,0"
-                               VerticalAlignment="Center"
-                               Foreground="{Binding StatusBrush}" />
-
-                </StackPanel>
-
                 <UniformGrid Rows="1"
                              Columns="3"
                              Width="270"

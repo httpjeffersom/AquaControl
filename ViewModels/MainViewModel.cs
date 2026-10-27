@@ -19,9 +19,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     private bool monitoringRequested = true;
     private bool isConnecting;
     private bool isDisposing;
-    private string status = "DESCONECTADO";
     private string message = "PRONTO";
-    private string deviceSummary = "NENHUM DISPOSITIVO";
     private double targetTemperature;
     private double displayedTemperature;
     private bool isConnected;
@@ -77,22 +75,10 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         }
     }
 
-    public string Status
-    {
-        get => status;
-        private set => SetField(ref status, value);
-    }
-
     public string Message
     {
         get => message;
         private set => SetField(ref message, value);
-    }
-
-    public string DeviceSummary
-    {
-        get => deviceSummary;
-        private set => SetField(ref deviceSummary, value);
     }
 
     public string MinimumTemperatureText => minimumTemperature is null ? "--" : $"{minimumTemperature} °C";
@@ -124,17 +110,10 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
     public string TemperatureText => $"{Math.Round(DisplayedTemperature):0}";
     public double Progress => Math.Clamp(DisplayedTemperature, 0, 100) / 100;
     public System.Windows.Media.Brush IndicatorBrush => CreateBrush(GetTemperatureColor(DisplayedTemperature));
-    public System.Windows.Media.Brush StatusBrush => IsConnected ? ConnectedBrush : DisconnectedBrush;
     public bool IsConnected
     {
         get => isConnected;
-        private set
-        {
-            if (SetField(ref isConnected, value))
-            {
-                OnPropertyChanged(nameof(StatusBrush));
-            }
-        }
+        private set => SetField(ref isConnected, value);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -198,24 +177,8 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
     private void UpdateConnectionState()
     {
-        bool connected = deviceManager?.IsConnected == true;
-        bool monitoring = deviceManager?.IsMonitoring == true;
-        bool connectionChanged = IsConnected != connected;
-        bool monitoringChanged = IsMonitoring != monitoring;
-
-        IsConnected = connected;
-        IsMonitoring = monitoring;
-        DeviceSummary = deviceManager?.DeviceSummary ?? "NENHUM DISPOSITIVO";
-
-        if (connectionChanged || monitoringChanged)
-        {
-            Status = connected ? "CONECTADO" : "DESCONECTADO";
-            Message = !connected
-                ? "AGUARDANDO WATERCOOLER"
-                : monitoring
-                    ? "MONITORAMENTO ATIVO"
-                    : "MONITORAMENTO PAUSADO";
-        }
+        IsConnected = deviceManager?.IsConnected == true;
+        IsMonitoring = deviceManager?.IsMonitoring == true;
     }
 
     public void StartMonitoring()
@@ -313,10 +276,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
         System.Windows.Application.Current?.Dispatcher.InvokeAsync(() =>
         {
             if (deviceManager?.IsConnected != true)
-            {
-                Status = "ERRO DE CONEXÃO";
                 Message = "TENTANDO RECONECTAR";
-            }
         });
     }
 

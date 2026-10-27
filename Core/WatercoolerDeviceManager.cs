@@ -63,24 +63,6 @@ public sealed class WatercoolerDeviceManager : IAsyncDisposable
         }
     }
 
-    public string DeviceSummary
-    {
-        get
-        {
-            lock (gate)
-            {
-                if (activeDevices.Count == 0)
-                    return "NENHUM DISPOSITIVO";
-
-                return string.Join(" + ", activeDevices.Values
-                    .GroupBy(device => device.Descriptor.DisplayName)
-                    .Select(group => group.Count() == 1
-                        ? group.Key
-                        : $"{group.Key} ({group.Count()})"));
-            }
-        }
-    }
-
     /// <summary>
     /// Procura dispositivos novos, remove os que sumiram e abre os que ainda
     /// não estão ativos. Não lança exceção por ausência de hardware.
