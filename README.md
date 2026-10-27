@@ -22,27 +22,10 @@ A lógica de leitura usa monitoramento de hardware em modo usuário e a comunica
 - envio da temperatura para o display do watercooler
 - animação visual da temperatura em interface WPF
 - exibição de mínima, média e máxima
-- alerta de temperatura alta (na janela e na bandeja)
+- alerta de temperatura alta
 - suporte a minimização para bandeja do sistema
 - inicialização com o Windows
 - reconexão automática se o dispositivo sair ou não estiver presente
-
-## Interface
-
-A janela tem três estados, sempre com uma única linha de status abaixo do anel:
-
-- **Conectado**: anel colorido pela temperatura, valor em °C, uso de CPU,
-  estatísticas da sessão e `WATER COOLER CONECTADO · <modelo>`.
-- **Desconectado**: as 72 bolinhas do anel ficam vermelhas e pulsam num ciclo
-  de 5 s; no lugar da temperatura aparece `WATERCOOLER NÃO ENCONTRADO`, o uso
-  de CPU continua visível e as estatísticas mostram `--`.
-- **Pausado**: a linha de status indica `MONITORAMENTO PAUSADO` em âmbar.
-
-Abaixo do anel, uma linha discreta mostra o erro atual (sensor indisponível,
-falha de comunicação, falha na inicialização) ou o horário da última leitura.
-O tooltip da bandeja acompanha o estado e nunca anuncia temperatura quando o
-cooler está desconectado. A janela pode ser redimensionada livremente: o
-conteúdo escala junto, sem cortar texto, inclusive em telas com DPI alto.
 
 ## Requisitos
 

@@ -14,10 +14,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\AquaControl.ico</ApplicationIcon>
     <RootNamespace>WatercoolerTemp</RootNamespace>
-    <!-- WFO0003 sugere configurar DPI via Application.SetHighDpiMode, mas este
-         é um app WPF: a inicialização do WinForms não é chamada e a percepção
-         de DPI precisa vir do manifesto do processo. -->
-    <NoWarn>$(NoWarn);WFO0003</NoWarn>
   </PropertyGroup>
 
   
