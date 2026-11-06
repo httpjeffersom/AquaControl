@@ -8,7 +8,7 @@
     <AssemblyName>AquaControl</AssemblyName>
     <AssemblyTitle>Aqua Control</AssemblyTitle>
     <Product>Aqua Control</Product>
-    <Version>1.2.0</Version>
+    <Version>2.0.0</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -35,7 +35,6 @@
          mas usada aqui como referência .NET nativa, sem precisar de programa externo).
          0.9.5+ trocou o driver WinRing0 pelo PawnIO (driver assinado); a leitura de
          CPU/motherboard depende do PawnIO estar instalado na máquina. -->
-    <PackageReference Include="HidSharp" Version="2.6.4" />
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
 
     <!-- Porta serial (equivalente ao pyserial) -->

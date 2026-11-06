@@ -1,13 +1,11 @@
 # Aqua Control
 
 Aplicativo Windows para monitorar a temperatura da CPU e enviar esse valor para o
-display de water coolers compatíveis, sem driver de kernel próprio e sem serviço
-instalado.
+display do water cooler **Pichau Aqua**, sem driver de kernel próprio e sem
+serviço instalado.
 
-Hoje o projeto cobre duas famílias: a linha **Pichau Aqua** (controlador CH340,
-via porta serial) e a família **Rise Mode Aura Ice** (HID nativo do Windows). O
-programa detecta qual delas o PC tem e controla;
-cada família tem sessão, transporte e protocolo independentes.
+O programa detecta o cooler pela porta serial do controlador CH340 e conversa
+com ele pelo protocolo da família Aqua.
 
 <p align="center">
   <img width="1113" height="591" alt="Aqua Control" src="https://github.com/user-attachments/assets/73fcdad7-a6cc-4f40-b2a2-07d0ba13af9b" />
@@ -17,22 +15,16 @@ cada família tem sessão, transporte e protocolo independentes.
 ## Visão geral
 
 A leitura da temperatura usa monitoramento de hardware em modo usuário. A
-comunicação com cada cooler é feita pelo transporte que o próprio Windows já
-expõe:
+comunicação com o cooler é feita pelo transporte que o próprio Windows já
+expõe: a porta serial virtual do CH340 (`VID_1A86&PID_484A`).
 
-- **Pichau Aqua**: porta serial virtual do CH340 (`VID_1A86&PID_484A`).
-- **Rise Mode Aura Ice**: dispositivo HID (`VID 0xAA88` / `PID 0x8666`), sem
-  Zadig, WinUSB ou libusb.
-
-O programa descobre os dispositivos, mantém uma sessão por dispositivo,
-reconecta sozinho quando algo é plugado ou removido e encaminha os eventos para
-a interface. Nenhum dado sai do computador.
+O programa descobre o dispositivo, mantém uma sessão ativa, reconecta sozinho
+quando ele é plugado ou removido e encaminha os eventos para a interface.
+Nenhum dado sai do computador.
 
 ## Principais funcionalidades
 
-- detecção automática dos water coolers suportados por VID/PID
-- detecção única: identifica se o PC tem Pichau **ou** Rise Mode e controla
-  apenas o dispositivo encontrado
+- detecção automática da porta serial do Pichau Aqua por VID/PID
 - leitura da temperatura da CPU com uma única instância do leitor de sensores
 - envio da temperatura para o display do cooler
 - reconexão automática a cada 5 segundos quando o dispositivo desaparece
@@ -52,49 +44,30 @@ a interface. Nenhum dado sai do computador.
 - **PawnIO** instalado (driver assinado usado pela biblioteca de sensores para
   ler a CPU): [pawnio.eu](https://pawnio.eu) ou
   `winget install -e --id namazso.PawnIO`
-- **Pichau Aqua**: driver CH340 instalado pelo próprio Windows
-- **Rise Mode Aura Ice**: nada extra — o Windows já expõe o dispositivo como HID
+- driver CH340 instalado pelo próprio Windows
 - execução como administrador (o manifesto do app solicita elevação)
 
 ## Hardware suportado
 
-| Família / modelo | Conexão | Situação |
+| Modelo | Conexão | Situação |
 |---|---|---|
 | Pichau Aqua 240X | serial CH340 | validado fisicamente nesta máquina |
 | Pichau Aqua 120X / 360X | serial CH340 | mesmo protocolo da família Aqua |
-| Rise Mode Aura Ice ARGB 240 mm branco (`RM-WAI-02-ARGB`) | HID `0xAA88/0x8666` | alvo do suporte atual |
-| Rise Mode Aura Ice Black 240/360 mm ARGB | HID `0xAA88/0x8666` | mesmo controlador e payload, confirmado pelas referências |
 
-Sobre a **família Aura Ice**: os modelos Black e White, 240 e 360 mm, usam o
-mesmo controlador HID e o mesmo formato de relatório. A detecção **não** usa o
-nome comercial (o nome HID é genérico e o VID/PID é compartilhado por rebrands,
-como a Mancer): o app exige o VID/PID correto **e** um relatório de saída de 9
-bytes. Ainda assim, outro water cooler com o mesmo controlador pode aceitar o
-mesmo protocolo.
-
-O protocolo detalhado do Rise Mode, com as evidências e o que **não** foi
-implementado, está em
-[`Core/RiseModeAuraIce/PROTOCOL.md`](Core/RiseModeAuraIce/PROTOCOL.md).
-
-> O Aqua Control foi desenhado para **um water cooler por PC**. Se dois forem
-> conectados ao mesmo tempo (cenário não suportado), apenas o primeiro
-> encontrado é controlado; o segundo fica intocado.
+> O Aqua Control foi desenhado para **um water cooler por PC**. Se mais de uma
+> porta compatível for encontrada (cenário não suportado), apenas a primeira é
+> controlada.
 
 ## Como funciona
 
-1. O gerenciador procura os dois tipos de dispositivo: portas seriais CH340 do
-   Pichau e dispositivos HID do Rise Mode.
-2. O primeiro dispositivo compatível encontrado ganha uma sessão. Enquanto ela
-   estiver ativa, nenhum outro candidato é aberto: o app assume um water cooler
-   por PC e trabalha com **Pichau ou Rise Mode**, nunca os dois.
+1. O gerenciador procura portas seriais CH340 compatíveis com o Pichau Aqua.
+2. A primeira porta encontrada ganha uma sessão. Enquanto ela estiver ativa,
+   nenhum outro candidato é aberto.
 3. Um único `CpuTemperatureReader` compartilhado lê a temperatura da CPU.
-4. O driver da família detectada monta o pacote no seu protocolo:
-   - **Pichau Aqua**: payload de 23 bytes pela serial; envia quando a
-     temperatura muda, com reenvio de manutenção a cada 2 segundos.
-   - **Rise Mode**: relatório HID de 9 bytes (Report ID 0 + 8 bytes), com burst
-     de 5 escritas a cada 50 ms para o display acompanhar rápido.
-5. A interface reflete o estado do water cooler detectado: conectado, sem
-   dispositivo ou monitoramento pausado.
+4. O protocolo monta o pacote de 23 bytes enviado pela serial; o app envia
+   quando a temperatura muda, com reenvio de manutenção a cada 2 segundos.
+5. A interface reflete o estado do cooler: conectado, sem dispositivo ou
+   monitoramento pausado.
 
 ## Interface
 
@@ -109,8 +82,8 @@ implementado, está em
 ## Segurança e Defender
 
 O Aqua Control não instala driver próprio nem mantém serviço: fala com o cooler
-pela porta serial e pelo HID que o Windows já oferece, e só altera o registro
-para a inicialização opcional.
+pela porta serial que o Windows já oferece, e só altera o registro para a
+inicialização opcional.
 
 Para ler a temperatura da CPU, usa a `LibreHardwareMonitorLib`, que desde a
 versão **0.9.5 deixou de usar o WinRing0**. O acesso aos MSR/SMU da CPU é feito
@@ -179,8 +152,8 @@ O executável será publicado em
 dotnet test AquaControl.sln
 ```
 
-A suíte cobre o protocolo do Pichau Aqua, o payload e a detecção do Rise Mode
-Aura Ice. Estado atual: **18 testes, todos passando**.
+A suíte cobre o protocolo do Pichau Aqua. Estado atual: **4 testes, todos
+passando**.
 
 ## Estrutura do projeto
 
@@ -197,17 +170,9 @@ AquaControl/
 │   ├── StartupManager.cs
 │   ├── WatercoolerDeviceManager.cs
 │   ├── WatercoolerMonitorService.cs
-│   ├── Devices/
-│   │   ├── IWatercoolerDeviceSession.cs
-│   │   ├── PichauAqua240XSession.cs
-│   │   └── RiseModeAuraIceSession.cs
-│   └── RiseModeAuraIce/
-│       ├── PROTOCOL.md
-│       ├── RiseModeAuraIceClient.cs
-│       ├── RiseModeAuraIceDeviceDiscovery.cs
-│       ├── RiseModeAuraIceDeviceInfo.cs
-│       ├── RiseModeAuraIceMonitorService.cs
-│       └── RiseModeAuraIceProtocol.cs
+│   └── Devices/
+│       ├── IWatercoolerDeviceSession.cs
+│       └── PichauAqua240XSession.cs
 ├── Controls/
 │   └── TemperatureRing.cs
 ├── Views/
@@ -217,10 +182,7 @@ AquaControl/
 │   └── MainViewModel.cs
 ├── Tests/
 │   ├── AquaControl.Tests.csproj
-│   ├── Aqua240XProtocolTests.cs
-│   └── RiseModeAuraIce/
-│       ├── RiseModeAuraIceProtocolTests.cs
-│       └── RiseModeAuraIceDetectionTests.cs
+│   └── Aqua240XProtocolTests.cs
 ├── Assets/
 │   ├── AquaControl.ico
 │   └── AquaControl.png
@@ -235,17 +197,9 @@ AquaControl/
 
 ## Limitações conhecidas
 
-- o software oficial do water cooler (Pichau ou Rise Mode) não deve estar em
-  execução ao mesmo tempo
-- o app trabalha com um water cooler por PC; se dois forem conectados, apenas o
-  primeiro encontrado é controlado
-- o Rise Mode não expõe nome comercial legível; quem apresentar os
-  identificadores `0xAA88/0x8666` sem relatório de saída compatível é ignorado
-- outros water coolers com o mesmo controlador (por exemplo, revendas como
-  Mancer) podem ser aceitos pelo mesmo protocolo, mas não foram validados
-- se o display recebeu driver WinUSB via Zadig em um uso anterior, o Aqua
-  Control não o encontra; desinstale o driver no Gerenciador de Dispositivos e
-  peça ao Windows para recriar o HID padrão
+- o software oficial do water cooler não deve estar em execução ao mesmo tempo
+- o app trabalha com um water cooler por PC; se mais de uma porta compatível
+  for encontrada, apenas a primeira é controlada
 - a leitura da CPU depende do PawnIO instalado; sem ele o app abre, mas mostra
   `PAWNIO NÃO INSTALADO — SEM LEITURA DA CPU` e não envia temperatura
 - o executável não tem assinatura de código; o SmartScreen pode exibir aviso na
@@ -253,20 +207,15 @@ AquaControl/
 
 ## Próximos passos
 
-Agora vamos incorporar **diversos novos water coolers com visor de
-temperatura**, mantendo o mesmo princípio que trouxe o Rise Mode Aura Ice até
-aqui:
+O suporte é focado na família Pichau Aqua. Novos modelos de water cooler com
+visor de temperatura podem ser adicionados seguindo o mesmo princípio:
 
-- suporte por transporte nativo (serial ou HID), sem driver de kernel
+- suporte por transporte nativo (serial), sem driver de kernel
 - implementação apenas de comandos confirmados por referência ou captura real
 - detecção por identificadores, nunca pelo nome comercial
 - sessões independentes, para que um modelo novo não quebre os já suportados
 - um documento de protocolo por família, com as evidências e o que não foi
   implementado
-
-A família **Rise Mode Aura Ice** é o primeiro passo desse caminho. As próximas
-famílias serão anunciadas aqui conforme os protocolos forem confirmados em
-hardware real.
 
 Se você tem um water cooler com visor de temperatura e quer ajudar, abra uma
 issue informando **modelo, VID/PID e uma captura USB** do software oficial. É
@@ -281,30 +230,12 @@ esse material que permite implementar o protocolo sem chutes.
 - [x] Alertas de temperatura alta
 - [x] Inicialização com o Windows
 - [x] Sem driver próprio de kernel (sensores de CPU via PawnIO assinado)
-- [x] Suporte ao Rise Mode Aura Ice via HID nativo (driver independente)
-- [x] Detecção única: Pichau **ou** Rise Mode, um water cooler por PC
 - [x] Reconexão automática do dispositivo
 - [x] Testes automatizados de protocolo e detecção
 - [ ] Novas famílias de water coolers com visor de temperatura
 
 ## Créditos
 
-Este projeto existe porque outras pessoas publicaram engenharia reversa e
-implementações de referência. Crédito aos repositórios que tornaram o suporte ao
-Rise Mode Aura Ice possível:
-
-- [bmortella/wc-aura-ice-linux](https://github.com/bmortella/wc-aura-ice-linux)
-  — engenharia reversa original do display via USB/HID.
-- [rafaelwms/win-watercooler-display](https://github.com/rafaelwms/win-watercooler-display)
-  — implementação Windows em C# que confirmou o mesmo payload via HID nativo,
-  sem WinUSB/Zadig.
-- [liquidctl/liquidctl (#781)](https://github.com/liquidctl/liquidctl/issues/781)
-  — descritores USB do dispositivo e informação de que o VID/PID é compartilhado
-  por rebrands.
-- [Finallf/risemode](https://github.com/Finallf/risemode) — confirmação do
-  VID/PID e de escritas curtas via hidraw.
-- [Italord0/risemode-arch](https://github.com/Italord0/risemode-arch) — mesma
-  detecção por VID/PID e escrita curta de 1 byte.
 - [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)
   — biblioteca de leitura de sensores usada pelo projeto.
 - [PawnIO](https://pawnio.eu) — driver assinado que substituiu o WinRing0 como

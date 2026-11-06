@@ -1,18 +1,15 @@
 using WatercoolerTemp.Core.Devices;
-using WatercoolerTemp.Core.RiseModeAuraIce;
 
 namespace WatercoolerTemp.Core;
 
 /// <summary>
-/// Coordena os water coolers suportados. Cada dispositivo tem sua própria
-/// sessão, transporte e protocolo; o gerenciador apenas descobre, abre,
-/// inicia, remove e encaminha os eventos para a interface.
+/// Coordena o water cooler Pichau Aqua: descobre a porta serial do controlador
+/// CH340, abre a sessão, inicia o monitoramento, remove quando o dispositivo
+/// desaparece e encaminha os eventos para a interface.
 ///
-/// O app foi desenhado para um único water cooler por PC: o gerenciador
-/// identifica qual família está presente (Pichau Aqua ou Rise Mode Aura Ice) e
-/// controla somente ela. Um PC com os dois conectados não é um cenário
-/// suportado; se acontecer, o primeiro encontrado fica ativo e o outro é
-/// ignorado até o primeiro sair.
+/// O app foi desenhado para um único water cooler por PC. Se mais de uma porta
+/// compatível for encontrada (cenário não suportado), apenas a primeira fica
+/// ativa.
 /// </summary>
 public sealed class WatercoolerDeviceManager : IAsyncDisposable
 {
@@ -250,22 +247,12 @@ public sealed class WatercoolerDeviceManager : IAsyncDisposable
         }
         catch (InvalidOperationException)
         {
-            // Ausência do Pichau ou mais de uma porta compatível. O suporte
-            // existente trata esses casos como "não conectar"; o Rise Mode
-            // continua sendo procurado normalmente.
+            // Ausência do Pichau ou mais de uma porta compatível: o app trata
+            // esses casos como "não conectar".
         }
         catch (Exception exception)
         {
             AppLogger.Error("Falha ao procurar o Pichau Aqua", exception);
-        }
-
-        foreach (RiseModeAuraIceDeviceInfo info in RiseModeAuraIceDeviceDiscovery.FindDevices())
-        {
-            RiseModeAuraIceDeviceInfo captured = info;
-            devices.Add(new DeviceDescriptor(
-                $"rise-mode-aura-ice:{captured.DevicePath}",
-                RiseModeAuraIceDeviceInfo.DisplayName,
-                () => new RiseModeAuraIceSession(captured, sharedTemperatureReader, UpdateIntervalMs)));
         }
 
         return devices;
