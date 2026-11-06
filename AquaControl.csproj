@@ -8,7 +8,7 @@
     <AssemblyName>AquaControl</AssemblyName>
     <AssemblyTitle>Aqua Control</AssemblyTitle>
     <Product>Aqua Control</Product>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -32,13 +32,15 @@
 
   <ItemGroup>
     <!-- Biblioteca de sensores de hardware (mesma engine do LibreHardwareMonitor,
-         mas usada aqui como referência .NET nativa, sem precisar de programa externo) -->
-    <PackageReference Include="HidSharp" Version="2.1.0" />
-    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4" />
+         mas usada aqui como referência .NET nativa, sem precisar de programa externo).
+         0.9.5+ trocou o driver WinRing0 pelo PawnIO (driver assinado); a leitura de
+         CPU/motherboard depende do PawnIO estar instalado na máquina. -->
+    <PackageReference Include="HidSharp" Version="2.6.4" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
 
     <!-- Porta serial (equivalente ao pyserial) -->
-    <PackageReference Include="System.IO.Ports" Version="9.0.0" />
-    <PackageReference Include="System.Management" Version="9.0.0" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.3" />
+    <PackageReference Include="System.Management" Version="10.0.2" />
   </ItemGroup>
 
   <!-- Garantir que as DLLs de dependências sejam copiadas para a pasta de output -->

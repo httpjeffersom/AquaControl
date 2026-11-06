@@ -262,7 +262,10 @@ public sealed class MainViewModel : INotifyPropertyChanged, IAsyncDisposable
 
     private void OnTemperatureUnavailable()
     {
-        System.Windows.Application.Current.Dispatcher.Invoke(() => Message = "SENSOR DA CPU INDISPONÍVEL");
+        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            Message = CpuTemperatureReader.IsPawnIoInstalled
+                ? "SENSOR DA CPU INDISPONÍVEL"
+                : "PAWNIO NÃO INSTALADO — SEM LEITURA DA CPU");
     }
 
     private void OnManagerError(Exception exception)

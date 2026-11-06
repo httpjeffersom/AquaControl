@@ -1,5 +1,6 @@
 using System.Linq;
 using LibreHardwareMonitor.Hardware;
+using LibreHardwareMonitor.PawnIo;
 
 namespace WatercoolerTemp.Core;
 
@@ -12,14 +13,46 @@ public sealed class CpuTemperatureReader : IDisposable
     private readonly object syncRoot = new();
     private int? cpuUsage;
 
+    /// <summary>
+    /// Indica se o driver PawnIO (usado pelo LibreHardwareMonitor 0.9.5+ para
+    /// acessar MSR/SMU da CPU) está instalado. Sem ele, sensores que dependem
+    /// de kernel não retornam leitura.
+    /// </summary>
+    public static bool IsPawnIoInstalled { get; private set; }
+
     public void Open()
     {
+        RefreshPawnIoStatus();
+
         lock (syncRoot)
         {
             computer.Open();
         }
 
         AppLogger.Info("Leitor de temperatura aberto.");
+    }
+
+    private static void RefreshPawnIoStatus()
+    {
+        try
+        {
+            IsPawnIoInstalled = PawnIo.IsInstalled;
+            if (IsPawnIoInstalled)
+            {
+                AppLogger.Info($"PawnIO detectado (versão {PawnIo.Version}).");
+            }
+            else
+            {
+                AppLogger.Error(
+                    "PawnIO não instalado: sensores de CPU que dependem de kernel ficam " +
+                    "indisponíveis. Instale em https://pawnio.eu");
+            }
+        }
+        catch (Exception exception)
+        {
+            IsPawnIoInstalled = false;
+            AppLogger.Error("Falha ao verificar a instalação do PawnIO", exception);
+        }
     }
 
     public int? CpuUsage

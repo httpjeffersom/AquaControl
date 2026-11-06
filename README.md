@@ -49,6 +49,9 @@ a interface. Nenhum dado sai do computador.
 - Windows 10/11
 - .NET SDK 10.0 ou superior (para compilar)
 - conector USB do cooler
+- **PawnIO** instalado (driver assinado usado pela biblioteca de sensores para
+  ler a CPU): [pawnio.eu](https://pawnio.eu) ou
+  `winget install -e --id namazso.PawnIO`
 - **Pichau Aqua**: driver CH340 instalado pelo próprio Windows
 - **Rise Mode Aura Ice**: nada extra — o Windows já expõe o dispositivo como HID
 - execução como administrador (o manifesto do app solicita elevação)
@@ -86,7 +89,8 @@ implementado, está em
    por PC e trabalha com **Pichau ou Rise Mode**, nunca os dois.
 3. Um único `CpuTemperatureReader` compartilhado lê a temperatura da CPU.
 4. O driver da família detectada monta o pacote no seu protocolo:
-   - **Pichau Aqua**: payload de 23 bytes pela serial, a cada 1 segundo.
+   - **Pichau Aqua**: payload de 23 bytes pela serial; envia quando a
+     temperatura muda, com reenvio de manutenção a cada 2 segundos.
    - **Rise Mode**: relatório HID de 9 bytes (Report ID 0 + 8 bytes), com burst
      de 5 escritas a cada 50 ms para o display acompanhar rápido.
 5. A interface reflete o estado do water cooler detectado: conectado, sem
@@ -104,42 +108,38 @@ implementado, está em
 
 ## Segurança e Defender
 
-O Aqua Control não instala nem carrega driver próprio. Conversa com o cooler
-pela porta serial e pelo HID que o Windows já oferece, e não altera o registro
-além do necessário para a inicialização opcional.
+O Aqua Control não instala driver próprio nem mantém serviço: fala com o cooler
+pela porta serial e pelo HID que o Windows já oferece, e só altera o registro
+para a inicialização opcional.
 
-Para ler a temperatura da CPU, o projeto usa a biblioteca
-`LibreHardwareMonitorLib`, a mesma engine open source do projeto
-[LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor).
-Para acessar sensores que o Windows não expõe (como a temperatura "Package" de
-CPUs Intel, lida via MSR), essa biblioteca carrega em modo kernel o driver
-**WinRing0**, que vem embutido nela — não é empacotado nem instalado à parte
-pelo Aqua Control. Essa é a abordagem padrão de ferramentas conhecidas de
-monitoramento (LibreHardwareMonitor, FanControl e similares).
+Para ler a temperatura da CPU, usa a `LibreHardwareMonitorLib`, que desde a
+versão **0.9.5 deixou de usar o WinRing0**. O acesso aos MSR/SMU da CPU é feito
+pelo **PawnIO**, um driver de kernel **assinado e open source**, mantido por
+[namazso](https://pawnio.eu), que executa módulos verificados em vez de expor
+memória física e MSR a qualquer processo. O PawnIO é instalado à parte
+([pawnio.eu](https://pawnio.eu) ou `winget install -e --id namazso.PawnIO`) e o
+app detecta quando ele não está presente, avisando na interface.
 
-O WinRing0 é um driver genérico de acesso ao hardware com vulnerabilidades já
-documentadas publicamente e é muito usado por malware real — por isso os
-antivírus aplicam heurística agressiva a qualquer aplicativo que o carregue. É
-exatamente isso que dispara o alerta do Windows Defender na primeira execução,
-e não qualquer comportamento malicioso do Aqua Control.
+Essa troca elimina o alerta `VulnerableDriver:WinNT/Winring0` que o Windows
+Defender passou a disparar em 2025 contra aplicativos que carregavam o WinRing0
+— exatamente o motivo pelo qual LibreHardwareMonitor, FanControl, OpenRGB e
+outros migraram para o PawnIO.
 
 Na prática:
 
 - nenhum dado sai do computador: o programa não faz acesso à rede
-- a biblioteca de sensores é usada apenas para leitura de sensores de hardware
+- o app não carrega driver próprio; o PawnIO é assinado e de código aberto
 - o executável não é empacotado, ofuscado nem faz download de nada
-- o alerta do Defender é um falso-positivo de heurística conhecido nesta
-  categoria de software
+- sem PawnIO o app continua abrindo, mas mostra "PAWNIO NÃO INSTALADO" e não
+  envia temperatura
 
 Código-fonte 100% aberto e auditável neste repositório: cada linha do que o
 programa faz está aqui.
 
-Se o Defender bloquear a primeira execução, autorize dentro do histórico de
-proteção do Windows Defender. Se preferir conferir por conta própria, envie o
-executável ao [VirusTotal](https://www.virustotal.com) e observe os fabricantes
-que acusarem detecção: falsos positivos por heurística são comuns em ferramentas
-de monitoramento de hardware e os fornecedores costumam remover a detecção após
-a análise.
+O executável não tem assinatura de código, então o SmartScreen pode exibir um
+aviso na primeira execução de builds baixadas da internet. Se quiser conferir
+por conta própria, envie o executável ao
+[VirusTotal](https://www.virustotal.com).
 
 ## Instalação e execução
 
@@ -246,9 +246,10 @@ AquaControl/
 - se o display recebeu driver WinUSB via Zadig em um uso anterior, o Aqua
   Control não o encontra; desinstale o driver no Gerenciador de Dispositivos e
   peça ao Windows para recriar o HID padrão
-- infelizmente o programa não tem assinatura digital e é bloqueado pelo Windows
-  Defender na primeira execução; permita dentro do histórico de proteção — não
-  há nada malicioso e tudo é local
+- a leitura da CPU depende do PawnIO instalado; sem ele o app abre, mas mostra
+  `PAWNIO NÃO INSTALADO — SEM LEITURA DA CPU` e não envia temperatura
+- o executável não tem assinatura de código; o SmartScreen pode exibir aviso na
+  primeira execução (não é detecção de malware)
 
 ## Próximos passos
 
@@ -279,7 +280,7 @@ esse material que permite implementar o protocolo sem chutes.
 - [x] Interface WPF
 - [x] Alertas de temperatura alta
 - [x] Inicialização com o Windows
-- [x] Sem driver personalizado de kernel
+- [x] Sem driver próprio de kernel (sensores de CPU via PawnIO assinado)
 - [x] Suporte ao Rise Mode Aura Ice via HID nativo (driver independente)
 - [x] Detecção única: Pichau **ou** Rise Mode, um water cooler por PC
 - [x] Reconexão automática do dispositivo
@@ -306,6 +307,8 @@ Rise Mode Aura Ice possível:
   detecção por VID/PID e escrita curta de 1 byte.
 - [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)
   — biblioteca de leitura de sensores usada pelo projeto.
+- [PawnIO](https://pawnio.eu) — driver assinado que substituiu o WinRing0 como
+  fonte de acesso a MSR/SMU da CPU.
 - [Flaticon](https://www.flaticon.com/) — arte do ícone.
 
 ## Licença
