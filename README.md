@@ -51,8 +51,9 @@ Nenhum dado sai do computador.
 
 | Modelo | Conexão | Situação |
 |---|---|---|
-| Pichau Aqua 240X | serial CH340 | validado fisicamente nesta máquina |
-| Pichau Aqua 120X / 360X | serial CH340 | mesmo protocolo da família Aqua |
+| Pichau Aqua 120X | serial CH340 | mesmo protocolo da família Aqua |
+| Pichau Aqua 240X | serial CH340 | validado fisicamente por mim |
+| Pichau Aqua 360X | serial CH340 | mesmo protocolo da família Aqua |
 
 > O Aqua Control foi desenhado para **um water cooler por PC**. Se mais de uma
 > porta compatível for encontrada (cenário não suportado), apenas a primeira é
