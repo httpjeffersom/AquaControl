@@ -233,7 +233,7 @@ esse material que permite implementar o protocolo sem chutes.
 - [x] Sem driver próprio de kernel (sensores de CPU via PawnIO assinado)
 - [x] Reconexão automática do dispositivo
 - [x] Testes automatizados de protocolo e detecção
-- [ ] Novas famílias de water coolers com visor de temperatura
+
 
 ## Créditos
 
