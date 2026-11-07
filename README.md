@@ -51,9 +51,12 @@ Nenhum dado sai do computador.
 
 | Modelo | Conexão | Situação |
 |---|---|---|
-| Pichau Aqua 120X | serial CH340 | mesmo protocolo da família Aqua |
-| Pichau Aqua 240X | serial CH340 | validado fisicamente por mim |
-| Pichau Aqua 360X | serial CH340 | mesmo protocolo da família Aqua |
+| [Pichau Aqua 120X ARGB 120 mm branco](https://www.pichau.com.br/water-cooler-pichau-aqua-120x-argb-120mm-branco-pch-aqa120x-wh01) | serial CH340 | mesmo protocolo da família Aqua |
+| [Pichau Aqua 240X ARGB 240 mm branco](https://www.pichau.com.br/water-cooler-pichau-aqua-240x-argb-240mm-branco-pch-aqa240x-wh01) | serial CH340 | validado fisicamente por mim |
+| [Pichau Aqua 360X ARGB 360 mm branco](https://www.pichau.com.br/water-cooler-pichau-aqua-360x-argb-360mm-branco-pch-aqa360x-wh01) | serial CH340 | mesmo protocolo da família Aqua |
+
+Os três modelos compartilham o mesmo controlador CH340 e o mesmo protocolo de
+display; o suporte foi validado fisicamente no **240X**.
 
 > O Aqua Control foi desenhado para **um water cooler por PC**. Se mais de uma
 > porta compatível for encontrada (cenário não suportado), apenas a primeira é
